@@ -54,7 +54,6 @@ public class ChestOperator extends InventoryBlockOperator {
 
 	@Override
 	public void renderBlockSpecial(RenderManager manager, RenderBlocks render, BlockData data) {
-		Block block = data.block;
 		int metadata = data.metadata;
 
 		boolean adjacentChestZNeg = false;
@@ -76,11 +75,17 @@ public class ChestOperator extends InventoryBlockOperator {
 
 		if (!adjacentChestXPos && !adjacentChestZPos) {
 			model = modelChest;
-			loadTexture(manager, "/item/chest.png");
+			if (data.block.blockID == Block.chestTrapped.blockID)
+				loadTexture(manager, "/item/chests/trap_small.png");
+			else
+				loadTexture(manager, "/item/chest.png");
 		}
 		else {
 			model = modelLargeChest;
-			loadTexture(manager, "/item/largechest.png");
+			if (data.block.blockID == Block.chestTrapped.blockID)
+				loadTexture(manager, "/item/chests/trap_large.png");
+			else
+				loadTexture(manager, "/item/largechest.png");
 		}
 
 		GL11.glPushMatrix();
@@ -124,6 +129,7 @@ public class ChestOperator extends InventoryBlockOperator {
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.chest.blockID);
+		result.add(Block.chestTrapped.blockID);
 	}
 
 	@Override

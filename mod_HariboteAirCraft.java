@@ -36,6 +36,7 @@ public class mod_HariboteAirCraft extends BaseMod {
 		new KeyBinding("key.HAC_Down", Keyboard.KEY_NUMPAD2),
 		new KeyBinding("key.HAC_Right", Keyboard.KEY_NUMPAD6),
 		new KeyBinding("key.HAC_Left", Keyboard.KEY_NUMPAD4),
+		new KeyBinding("key.HAC_Terminate", Keyboard.KEY_DIVIDE),
 	};
 
 	@MLProp(min = 0)
@@ -75,7 +76,7 @@ public class mod_HariboteAirCraft extends BaseMod {
 
 	@Override
 	public String getVersion() {
-		return "151v2 voyager";
+		return "151v3 voyager";
 	}
 
 	@Override
@@ -118,6 +119,7 @@ public class mod_HariboteAirCraft extends BaseMod {
 		ModLoader.addLocalization("key.HAC_Right", "ja_JP", "はりぼて右スライド");
 		ModLoader.addLocalization("key.HAC_Left", "ja_JP", "はりぼて左スライド");
 		ModLoader.addLocalization("key.HAC_Stop", "ja_JP", "はりぼて停止");
+		ModLoader.addLocalization("key.HAC_Terminate", "ja_JP", "はりぼて終了");
 	}
 
 	@Override

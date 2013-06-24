@@ -53,21 +53,21 @@ public class RailOperator extends AbstractRotationOperator {
 	}
 
 	@Override
-	protected boolean setRealBlock(Materializer owner, int blockId, int metadata, int x, int y, int z) {
-		boolean result = super.setRealBlock(owner, blockId, metadata, x, y, z);
-		if (result && Utils.getBlock(blockId) != null) {
-			owner.world.setBlockMetadataWithNotify(x, y, z, metadata, 2); // 無視されるので重ねて metadata 設定
-		}
-		return result;
-	}
-
-	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.rail.blockID);
 	}
 
 	@Override
 	protected ScanTime getScanTime(int blockId) {
-		return ScanTime.Delicate;
+		return ScanTime.RedstoneOutput;
+	}
+
+	@Override
+	protected boolean setRealBlock(Materializer owner, int blockId, int metadata, int x, int y, int z) {
+		boolean result = super.setRealBlock(owner, blockId, metadata, x, y, z);
+		if (result && Utils.getBlock(blockId) != null) {
+			owner.world.setBlockMetadataWithNotify(x, y, z, metadata, 2); // 無視されるので重ねて metadata 設定
+		}
+		return result;
 	}
 }

@@ -193,7 +193,9 @@ public abstract class EntityAirCraft extends Entity {
 
 	protected void capturePassenger(Entity ent) {
 		EntityMobMat mat = new EntityMobMat(worldObj, getOwnerName());
-		mat.setPosition(ent.posX, ent.posY, ent.posZ);
+		// double y = Math.max(ent.posY, this.posY + this.height); // 位置補正
+		double y = ent.posY;
+		mat.setPosition(ent.posX, y, ent.posZ);
 		worldObj.spawnEntityInWorld(mat);
 		ent.mountEntity(mat); // ent を mat に載せる
 	}
@@ -226,7 +228,7 @@ public abstract class EntityAirCraft extends Entity {
 					chunk.getEntitiesOfTypeWithinAAAB(Entity.class, aabb, result, new IEntitySelector() {
 						@Override
 						public boolean isEntityApplicable(Entity ent) {
-							return (ent instanceof EntityAirCraft) == false && !ent.isDead && ent.ridingEntity == null;
+							return ent instanceof EntityAirCraft == false && !ent.isDead && ent.ridingEntity == null;
 						}
 					});
 				}

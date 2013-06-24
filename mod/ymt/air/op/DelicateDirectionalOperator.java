@@ -30,6 +30,8 @@ public class DelicateDirectionalOperator extends DirectionalOperator {
 		result.add(Block.redstoneRepeaterIdle.blockID);
 		result.add(Block.redstoneRepeaterActive.blockID);
 		result.add(Block.tripWireSource.blockID); // ワイヤーフック
+		result.add(Block.redstoneComparatorIdle.blockID);
+		result.add(Block.redstoneComparatorActive.blockID);
 	}
 
 	@Override

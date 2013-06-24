@@ -16,6 +16,7 @@
 package mod.ymt.air.op;
 
 import java.util.Set;
+import mod.ymt.air.ScanTime;
 import net.minecraft.src.Block;
 
 /**
@@ -24,29 +25,16 @@ import net.minecraft.src.Block;
  */
 public class TrapdoorOperator extends AbstractRotationOperator {
 	public TrapdoorOperator() {
-		for (int metadata = 0; metadata < rotation.length; metadata++) {
-			// 0 → 3 → 1 → 2
-			int d = metadata & 3;
-			switch (d) {
-				case 0:
-					d = 3;
-					break;
-				case 3:
-					d = 1;
-					break;
-				case 1:
-					d = 2;
-					break;
-				case 2:
-					d = 0;
-					break;
-			}
-			rotation[metadata] = (metadata & ~3) | (d & 3);
-		}
+		super(3, 0, 3, 1, 2);
 	}
 
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.trapdoor.blockID);
+	}
+
+	@Override
+	protected ScanTime getScanTime(int blockId) {
+		return ScanTime.RedstoneOutput;
 	}
 }

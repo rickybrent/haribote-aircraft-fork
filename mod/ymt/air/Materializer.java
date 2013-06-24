@@ -50,7 +50,10 @@ public class Materializer {
 	}
 
 	public void addCoreBlock(int x, int y, int z, int blockId, int metadata) {
-		space.setBlockData(BlockData.valueOf(blockId, metadata, Coord3D.ZERO, new Coord3D(x, y, z)));
+		BlockData data = BlockData.valueOf(blockId, metadata, Coord3D.ZERO, new Coord3D(x, y, z));
+		if (data != null) { // ありえないはずだけど
+			space.setBlockData(data);
+		}
 	}
 
 	public NBTTagCompound getImitationTileEntity(Coord3D absPos) {
@@ -62,10 +65,28 @@ public class Materializer {
 		List<BlockData> allBlocks = new LinkedList<BlockData>(space.getAllBlocks());
 		Collections.sort(allBlocks, new BlockDataBottomUpComparator());
 
-		// 順に配置(Normal)
+		// 一番上と一番下が、ワールド内に収まっていることを確認する
+		if (!allBlocks.isEmpty()) {
+			int minRelY = Integer.MAX_VALUE, maxRelY = Integer.MIN_VALUE;
+			for (BlockData data: allBlocks) {
+				if (data.relPos.y < minRelY)
+					minRelY = data.relPos.y;
+				if (maxRelY < data.relPos.y)
+					maxRelY = data.relPos.y;
+			}
+			if (y + minRelY < 0) { // 最下部が y < 0
+				return false;
+			}
+			if (world.getHeight() <= y + maxRelY + 1) { // 最上部が MaxHeight <= y
+				return false;
+			}
+		}
+
+		// 順に配置
 		processPutBlocks(ScanTime.Normal, allBlocks, x, y, z, rotate);
-		// 順に配置(Delicate)
 		processPutBlocks(ScanTime.Delicate, allBlocks, x, y, z, rotate);
+		processPutBlocks(ScanTime.RedstoneWire, allBlocks, x, y, z, rotate);
+		processPutBlocks(ScanTime.RedstoneOutput, allBlocks, x, y, z, rotate);
 
 		return true;
 	}
@@ -80,10 +101,13 @@ public class Materializer {
 
 		// y 座標の上から削除していく
 		Collections.sort(allPoints, new Coord3DTopDownComparator());
-		// 引っぺがす(Delicate)
+
+		// 引っぺがす
+		processRemoveBlocks(ScanTime.RedstoneOutput, allPoints, base);
+		processRemoveBlocks(ScanTime.RedstoneWire, allPoints, base);
 		processRemoveBlocks(ScanTime.Delicate, allPoints, base);
-		// 引っぺがす(Normal)
 		processRemoveBlocks(ScanTime.Normal, allPoints, base);
+
 		core.debugPrint("remove %s blocks", space.countAllBlocks());
 
 		// 表面計算

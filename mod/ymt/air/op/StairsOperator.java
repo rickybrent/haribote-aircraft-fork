@@ -24,25 +24,7 @@ import net.minecraft.src.Block;
  */
 public class StairsOperator extends AbstractRotationOperator {
 	public StairsOperator() {
-		for (int metadata = 0; metadata < rotation.length; metadata++) {
-			// 2 → 1 → 3 → 0
-			int d = metadata & 3;
-			switch (d) {
-				case 2:
-					d = 1;
-					break;
-				case 1:
-					d = 3;
-					break;
-				case 3:
-					d = 0;
-					break;
-				case 0:
-					d = 2;
-					break;
-			}
-			rotation[metadata] = (metadata & ~3) | (d & 3);
-		}
+		super(3, 0, 2, 1, 3);
 	}
 
 	@Override

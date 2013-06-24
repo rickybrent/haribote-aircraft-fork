@@ -35,10 +35,11 @@ public class EntityCraftBody extends EntityFollower {
 	public boolean interact(EntityPlayer player) {
 		if (core.tryInteractServer(worldObj)) {
 			capturePassengers(); // 効果範囲にいる子を乗せる
+			return true;
 		}
-		return true;
+		return false;
 	}
-	
+
 	@Override
 	public void setNextPosition(double x, double y, double z, float yaw, float pitch, int turn) {
 		// CraftBody では yaw と pitch を扱わない

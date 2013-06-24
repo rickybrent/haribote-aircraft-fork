@@ -20,5 +20,5 @@ package mod.ymt.air;
  *
  */
 public enum ScanTime {
-	Delicate, Normal,
+	Normal, Delicate, RedstoneWire, RedstoneOutput,
 }

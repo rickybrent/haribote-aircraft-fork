@@ -24,24 +24,9 @@ import net.minecraft.src.Block;
  */
 public class ButtonOperator extends AbstractRotationOperator {
 	public ButtonOperator() {
-		for (int metadata = 0; metadata < rotation.length; metadata++) {
-			// 1 → 3 → 2 → 4
-			int d = metadata & 7;
-			switch (d) {
-				case 1:
-					d = 3;
-					break;
-				case 3:
-					d = 2;
-					break;
-				case 2:
-					d = 4;
-					break;
-				case 4:
-					d = 1;
-					break;
-			}
-			rotation[metadata] = (d & 7); // 置くときにはボタンは常にオフ
+		super(7, 1, 3, 2, 4);
+		for (int i = 0; i < rotation.length; i++) {
+			rotation[i] &= 7; // 置くときにはボタンは常にオフ
 		}
 	}
 

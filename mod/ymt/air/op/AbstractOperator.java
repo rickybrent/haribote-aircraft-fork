@@ -112,17 +112,15 @@ public abstract class AbstractOperator implements Operator {
 	}
 
 	protected boolean isReplaceable(int oldBlockId, int newBlockId) {
+		// ハリボテより地面を優先する
 		if (oldBlockId == Block.bedrock.blockID) // 受け側が bedrock は再配置不可能
 			return false;
 		Block oldBlock = Utils.getBlock(oldBlockId);
 		if (oldBlock == null || oldBlock.blockMaterial.isReplaceable()) // 受け側が null または Replaceable なら再配置可能
 			return true;
-		Block newBlock = Utils.getBlock(newBlockId);
-		if (newBlock == null || newBlock.blockMaterial.isReplaceable()) // 置く側が null または Replaceable なら再配置不可能
-			return false;
-		if (newBlock.blockMaterial instanceof MaterialLogic) // 置く側が回路ならば再配置不可能
-			return false;
-		return true;
+		if (oldBlock.blockMaterial instanceof MaterialLogic) // 受け側が回路ならば再配置不可能
+			return true;
+		return false; // それ以外は再配置不可能
 	}
 
 	protected void onCancelSetRealBlock(Materializer owner, BlockData data, Coord3D target) {
@@ -136,7 +134,7 @@ public abstract class AbstractOperator implements Operator {
 			return false;
 		}
 		// 消去する前にタイルエンティティ回収
-		NBTTagCompound tileData = block instanceof BlockContainer ? readFromTileEntity(owner, blockId, metadata, pos) : null;
+		NBTTagCompound tileData = readFromTileEntity(owner, blockId, metadata, pos);
 		// 消去
 		setRealBlock(owner, 0, 0, pos.x, pos.y, pos.z);
 		// 追加
@@ -181,12 +179,13 @@ public abstract class AbstractOperator implements Operator {
 		}
 		// タイルエンティティ転写
 		writeToTileEntity(owner, data, target, rotate);
+
 		// 置いたら true
 		return true;
 	}
 
 	protected boolean setRealBlock(Materializer owner, int blockId, int metadata, int x, int y, int z) {
-		if (canPlaceBlockAt(owner.world, x, y, z, blockId, metadata)) {
+		if (blockId == 0 || canPlaceBlockAt(owner.world, x, y, z, blockId, metadata)) {
 			return owner.setRealBlock(x, y, z, blockId, metadata);
 		}
 		return false;

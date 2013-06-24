@@ -24,8 +24,6 @@ import net.minecraft.src.Block;
  *
  */
 public class NormalOperator extends AbstractOperator {
-	public static final NormalOperator INSTANCE = new NormalOperator();
-
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.stone.blockID);
@@ -92,6 +90,10 @@ public class NormalOperator extends AbstractOperator {
 		result.add(Block.blockNetherQuartz.blockID); // ネザー水晶ブロック
 		// AbstractOperator が TileEntity に対応したので、BlockContainer も少しだけ動かせる
 		result.add(Block.music.blockID); // ノートブロック
+		result.add(Block.daylightSensor.blockID); // 太陽光センサー
+		result.add(Block.beacon.blockID); // ビーコン
+		result.add(Block.enchantmentTable.blockID); // エンチャ台
+		result.add(Block.commandBlock.blockID); // コマンドブロック
 	}
 
 	@Override

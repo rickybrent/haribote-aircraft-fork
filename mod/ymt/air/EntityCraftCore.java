@@ -72,6 +72,8 @@ public abstract class EntityCraftCore extends EntityAirCraft {
 		}
 	}
 
+	public abstract void terminate();
+
 	private boolean trySetPositionAndRotation(double x, double y, double z, float yaw, float pitch) {
 		// 動かす前の値を保存
 		double prevPosX = posX;

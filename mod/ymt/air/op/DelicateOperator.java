@@ -59,7 +59,7 @@ public class DelicateOperator extends AbstractOperator {
 
 	@Override
 	protected ScanTime getScanTime(int blockID) {
-		return ScanTime.Delicate;
+		return blockID == Block.redstoneWire.blockID ? ScanTime.RedstoneWire : ScanTime.Delicate;
 	}
 
 	@Override

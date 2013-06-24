@@ -33,6 +33,8 @@ import mod.ymt.air.op.InventoryBlockOperator;
 import mod.ymt.air.op.LadderOperator;
 import mod.ymt.air.op.LeverOperator;
 import mod.ymt.air.op.NormalOperator;
+import mod.ymt.air.op.NullOperator;
+import mod.ymt.air.op.PistonOperator;
 import mod.ymt.air.op.RailOperator;
 import mod.ymt.air.op.RailPoweredOperator;
 import mod.ymt.air.op.StairsOperator;
@@ -46,6 +48,7 @@ import mod.ymt.cmn.WeakEntityCollection;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
+import net.minecraft.src.ITileEntityProvider;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
@@ -117,7 +120,7 @@ public class AirCraftCore extends NekonoteCore {
 				return result;
 			}
 		}
-		return NormalOperator.INSTANCE;
+		return NullOperator.INSTANCE;
 	}
 
 	public Block getBlockPyxis() {
@@ -284,9 +287,28 @@ public class AirCraftCore extends NekonoteCore {
 		return result;
 	}
 
+	public BlockData toSafeClientBlock(BlockData data) {
+		// TODO renderStrategy オプションを追加
+		// 2 = 変換しない
+		// 1 = Operator の無いブロックを変換
+		// 0 = Operator の無い BlockContainer を変換
+		// -1 = 常に羊毛に変換
+		if (getBlockOperator(data.block.blockID) instanceof NullOperator == false) {
+			// Operator が存在するなら安全
+			return data;
+		}
+		if (data.block instanceof ITileEntityProvider == false) {
+			// BlockContainer でなければたぶん安全
+			return data;
+		}
+		// 安全でないものは Block.cloth に変換
+		debugPrint("toSafeClientBlock [%s:%s] %s", data.block.blockID, data.metadata, data.block);
+		return new BlockData(Block.cloth, data.metadata, data.relPos, data.absPos);
+	}
+
 	protected Operator[] getDefaultOperators() {
 		return new Operator[]{
-			NormalOperator.INSTANCE,
+			new NormalOperator(),
 			new DelicateOperator(),
 			new DirectionalOperator(),
 			new DelicateDirectionalOperator(),
@@ -306,6 +328,8 @@ public class AirCraftCore extends NekonoteCore {
 			new ChestOperator(),
 			new EnderChestOperator(),
 			new AnvilOperator(),
+			new PistonOperator(),
+		//			new EndPortalOperator(),
 		};
 	}
 

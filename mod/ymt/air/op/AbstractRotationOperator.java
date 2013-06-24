@@ -31,15 +31,23 @@ public abstract class AbstractRotationOperator extends AbstractOperator {
 	}
 
 	protected AbstractRotationOperator(int a, int b, int c, int d) {
-		this();
-		a &= 15;
-		b &= 15;
-		c &= 15;
-		d &= 15;
-		rotation[a] = b;
-		rotation[b] = c;
-		rotation[c] = d;
-		rotation[d] = a;
+		this(15, a, b, c, d);
+	}
+
+	protected AbstractRotationOperator(int mask, int a, int b, int c, int d) {
+		for (int i = 0; i < rotation.length; i++) {
+			int direction = i & mask;
+			if (direction == a)
+				direction = b;
+			else if (direction == b)
+				direction = c;
+			else if (direction == c)
+				direction = d;
+			else if (direction == d)
+				direction = a;
+			rotation[i] = (i & ~mask) | (direction & mask);
+			rotation[i] &= 15;
+		}
 	}
 
 	protected int getRotatedMetadata(int metadata, int rotate) {

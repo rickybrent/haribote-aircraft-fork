@@ -56,20 +56,23 @@ minecraft 自体の利用条件に縛られることに注意してください�
 - 飛行船は地面などに当たると一旦止まります。
 - 飛行船は一定時間入力がないと、その場で止まります。その時間はConfig[moveKeepTime]から設定できます。(デッドマン装置)
 - 移動中のブロックは見た目だけです。ブロックとしての機能はありません。
+- 一部の非対応ブロックは、移動中の見た目が羊毛ブロックになります。羅針盤をOFFにすると元のブロックに戻ります。
+- 強制停止するときには、はりぼて終了キーを押してください。
 
 
 ## 操作説明(初期値)
 
-    はりぼて前進    = テンキー１    (MaxSpeed = 5)
-    はりぼて後退    = テンキー３    (MaxSpeed = 1)
-    はりぼて上昇    = テンキー８    (MaxSpeed = 2)
-    はりぼて下降    = テンキー２    (MaxSpeed = 2)
-    はりぼて右旋回  = テンキー９    (MaxSpeed = 2)
-    はりぼて左旋回  = テンキー７    (MaxSpeed = 2)
-    はりぼて右移動  = テンキー６    (MaxSpeed = 2)
-    はりぼて左移動  = テンキー４    (MaxSpeed = 2)
-    はりぼて停止    = テンキー５    (停止中に停止するとブロックグリッドに整列)
-    
+    はりぼて前進    = テンキー1    (MaxSpeed = 4)
+    はりぼて後退    = テンキー3    (MaxSpeed = 1)
+    はりぼて上昇    = テンキー8    (MaxSpeed = 4)
+    はりぼて下降    = テンキー2    (MaxSpeed = 4)
+    はりぼて右旋回  = テンキー9    (MaxSpeed = 4)
+    はりぼて左旋回  = テンキー7    (MaxSpeed = 4)
+    はりぼて右移動  = テンキー6    (MaxSpeed = 3)
+    はりぼて左移動  = テンキー4    (MaxSpeed = 3)
+    はりぼて停止    = テンキー5    (停止中に停止するとブロックグリッドに整列)
+    はりぼて終了    = テンキー/    (その場で強制的に再ブロック化)
+
 キーは押し続けたり連打しなくても、１回押すだけでその方向に動き出します。
 キーを重ねて入力するとその方向へスピードアップします。逆方向のキーでスピードダウンします。
 
@@ -102,6 +105,7 @@ limitations under the License.
 
 ## History
 
+- 151v3: 移動スピードなど調整しました。緊急停止ボタンを付けました。ピストン、ビーコン、醸造台などが動かせるようになりました。
 - 151v2: 描画系の処理を見直し、軽量化を図りました。チェスト、かまどなどが動かせるようになりました。Java6 で動かない部分を修正しました。
 - 151v1: Minecraft1.5.1 に対応。1.5.1から追加されたブロックを一部動かせるようになりました。
 - 147v2: 旋回に伴ってプレイヤーも方向を変えるようになりました。ドア、ベッド、植木鉢などが動かせるようになりました。
@@ -139,9 +143,12 @@ limitations under the License.
          26     Bed                         ベッド
          27     Powered Rail                パワードレール
          28     Detector Rail               ディテクターレール
+         29     Sticky Piston               粘着ピストン
          30     Web                         クモの巣
          31     Tall Grass                  背の高い草
          32     Dead Shrub                  枯れ木
+         33     Piston                      ピストン
+         34     Piston Head                 ピストンアーム
          35     Wool                        羊毛
          37     Dandelion                   花
          38     Rose                        バラ
@@ -217,6 +224,8 @@ limitations under the License.
          113    Nether Brick Fence          ネザーレンガフェンス
          114    Nether Brick Stairs         ネザーレンガの階段
          115    Nether Wart                 ネザーいぼ
+         116    Enchantment Table           エンチャント台
+         117    Brewing Stand               醸造台
          118    Cauldron                    大釜
          121    End Stone                   エンドストーン
          122    Dragon Egg                  ドラゴンエッグ
@@ -234,16 +243,23 @@ limitations under the License.
          134    Spruce Wood Stairs          木の階段(松)
          135    Birch Wood Stairs           木の階段(白樺)
          136    Jungle Wood Stairs          木の階段(ジャングル)
+         137    Command Block               コマンドブロック
+         138    Beacon                      ビーコン
          139    Cobblestone Wall            丸石フェンス
          140    Flower Pot                  植木鉢
          141    Carrots                     ニンジン
          142    Potatoes                    じゃがいも
          143    Wooden Button               木ボタン
          145    Anvil                       金床
+         146    TrappedChest                トラップチェスト
          147    Weighted Pressure Plate     金の感圧板
          148    Weighted Pressure Plate     鉄の感圧板
+         149    Redstone Comparator         レッドストーンコンパレータ
+         150    Redstone Comparator         レッドストーンコンパレータ
+         151    Daylight Sensor             太陽光センサー
          152    Redstone Block              レッドストーンブロック
          153    Nether Quartz Ore           ネザー水晶鉱石
+         154    Hopper                      ホッパー
          155    Nether Quartz Block         ネザー水晶ブロック
          156    Quartz Stairs               水晶の階段
          157    Activator Rail              作動レール

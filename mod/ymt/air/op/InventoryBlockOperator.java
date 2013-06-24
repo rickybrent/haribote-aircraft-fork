@@ -36,15 +36,17 @@ import net.minecraft.src.World;
  */
 public class InventoryBlockOperator extends AbstractRotationOperator {
 	public InventoryBlockOperator() {
-		super(2, 5, 3, 4);
+		super(7, 2, 5, 3, 4);
 	}
 
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.furnaceIdle.blockID);
 		result.add(Block.furnaceBurning.blockID);
+		result.add(Block.brewingStand.blockID);
 		result.add(Block.dispenser.blockID);
 		result.add(Block.dropper.blockID);
+		result.add(Block.hopperBlock.blockID);
 	}
 
 	protected void dropItemFromNBT(World world, NBTTagCompound tag, double x, double y, double z) {
@@ -98,7 +100,7 @@ public class InventoryBlockOperator extends AbstractRotationOperator {
 		clearInventory(tile);
 		return tag;
 	}
-	
+
 	@Override
 	protected boolean setRealBlock(Materializer owner, int blockId, int metadata, int x, int y, int z) {
 		boolean result = super.setRealBlock(owner, blockId, metadata, x, y, z);

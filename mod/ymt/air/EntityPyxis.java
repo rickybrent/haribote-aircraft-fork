@@ -61,11 +61,7 @@ public class EntityPyxis extends EntityImitator {
 	@Override
 	public boolean interact(EntityPlayer par1EntityPlayer) {
 		if (core.tryInteractServer(worldObj)) {
-			if (getStatus() == State.RUNNING) {
-				// adjustPositionAndRotation をクライアント側でも実施するように改良したほうがいいかなぁ
-				adjustPositionAndRotation();
-				setStatus(State.PUTBLOCK); // adjust 後には強制ブロック配置
-			}
+			terminate();
 		}
 		return true;
 	}

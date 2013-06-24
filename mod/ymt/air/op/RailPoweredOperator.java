@@ -69,16 +69,16 @@ public class RailPoweredOperator extends AbstractRotationOperator {
 	}
 
 	@Override
+	protected ScanTime getScanTime(int blockId) {
+		return ScanTime.Delicate;
+	}
+
+	@Override
 	protected boolean setRealBlock(Materializer owner, int blockId, int metadata, int x, int y, int z) {
 		boolean result = super.setRealBlock(owner, blockId, metadata, x, y, z);
 		if (result && Utils.getBlock(blockId) != null) {
 			owner.world.setBlockMetadataWithNotify(x, y, z, metadata, 2); // 無視されるので重ねて metadata 設定
 		}
 		return result;
-	}
-
-	@Override
-	protected ScanTime getScanTime(int blockId) {
-		return ScanTime.Delicate;
 	}
 }

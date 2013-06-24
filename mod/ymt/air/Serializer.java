@@ -23,6 +23,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import mod.ymt.cmn.Coord3D;
 import net.minecraft.src.CompressedStreamTools;
 import net.minecraft.src.NBTTagCompound;
@@ -35,8 +36,8 @@ public class Serializer {
 	private static final byte MAGIC_v1 = 0x4a;
 	protected final AirCraftCore core = AirCraftCore.getInstance();
 
-	public Collection<BlockData> deserialize(Coord3D basePoint, byte[] data) {
-		Collection<BlockData> result = new ArrayList<BlockData>();
+	public List<BlockData> deserialize(Coord3D basePoint, byte[] data) {
+		List<BlockData> result = new ArrayList<BlockData>();
 		try {
 			DataInputStream input = new DataInputStream(new ByteArrayInputStream(data));
 			try {
@@ -46,7 +47,10 @@ public class Serializer {
 						int size = input.readInt();
 						try {
 							for (int i = 0; i < size; i++) {
-								result.add(BlockData.read(input, basePoint));
+								BlockData b = BlockData.read(input, basePoint);
+								if (b != null) {
+									result.add(b);
+								}
 							}
 						}
 						catch (EOFException ex) {

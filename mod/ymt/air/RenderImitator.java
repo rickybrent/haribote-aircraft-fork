@@ -17,9 +17,12 @@ package mod.ymt.air;
 
 import java.util.Collection;
 import mod.ymt.cmn.Coord3D;
+import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.Render;
+import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.RenderHelper;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -28,7 +31,14 @@ import org.lwjgl.opengl.GL11;
  */
 public class RenderImitator extends Render {
 	public RenderImitator() {
-		;
+		this.renderBlocks = new RenderBlocks() {
+			@Override
+			public boolean renderStandardBlockWithAmbientOcclusion(Block block, int x, int y, int z, float r, float g, float b) {
+				// AmbientOcclusion にしておくと一部のブロックが不自然に暗くなるので、
+				// AmbientOcclusion は強制的に無効にしてしまう
+				return renderStandardBlockWithColorMultiplier(block, x, y, z, r, g, b);
+			}
+		};
 	}
 
 	@Override
@@ -41,12 +51,13 @@ public class RenderImitator extends Render {
 			return;
 		}
 		this.renderBlocks.blockAccess = imitator.getImitationSpace();
+		// 通常ブロック準備
+		if (imitator.glUpdateList || imitator.glCallList <= 0) {
+			updateBlockList(imitator);
+		}
+		// 通常ブロック描画
 		GL11.glPushMatrix();
 		{
-			// 通常ブロック描画
-			if (imitator.glUpdateList || imitator.glCallList <= 0) {
-				updateBlockList(imitator);
-			}
 			if (0 < imitator.glCallList) {
 				GL11.glTranslatef((float) x, (float) y, (float) z);
 				GL11.glRotatef(-yaw, 0, 1, 0);
@@ -56,9 +67,9 @@ public class RenderImitator extends Render {
 			}
 		}
 		GL11.glPopMatrix();
+		// カスタムレンダリングブロック描画
 		GL11.glPushMatrix();
 		{
-			// カスタムレンダリングブロック描画
 			GL11.glTranslatef((float) x, (float) y, (float) z);
 			GL11.glRotatef(-yaw, 0, 1, 0);
 			renderCustomBlocks(imitator);
@@ -80,7 +91,7 @@ public class RenderImitator extends Render {
 	protected void prepareBlockList(Collection<BlockData> blocks) {
 		GL11.glPushMatrix();
 		{
-			GL11.glDisable(GL11.GL_LIGHTING);
+			RenderHelper.disableStandardItemLighting();
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -95,7 +106,7 @@ public class RenderImitator extends Render {
 				}
 				GL11.glPopMatrix();
 			}
-			GL11.glEnable(GL11.GL_LIGHTING);
+			RenderHelper.enableStandardItemLighting();
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_CULL_FACE);
 		}
@@ -103,7 +114,7 @@ public class RenderImitator extends Render {
 	}
 
 	protected void renderCustomBlocks(EntityImitator imitator) {
-		GL11.glDisable(GL11.GL_LIGHTING);
+		RenderHelper.disableStandardItemLighting();
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -118,7 +129,7 @@ public class RenderImitator extends Render {
 			}
 			GL11.glPopMatrix();
 		}
-		GL11.glEnable(GL11.GL_LIGHTING);
+		RenderHelper.enableStandardItemLighting();
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
@@ -128,9 +139,13 @@ public class RenderImitator extends Render {
 		imitator.glCallList = GLAllocation.generateDisplayLists(1);
 		if (0 < imitator.glCallList) {
 			imitator.glUpdateList = false;
-			GL11.glNewList(imitator.glCallList, GL11.GL_COMPILE);
-			prepareBlockList(imitator.getSurfaces()); // レンダリング
-			GL11.glEndList();
+			GL11.glPushMatrix();
+			{
+				GL11.glNewList(imitator.glCallList, GL11.GL_COMPILE);
+				prepareBlockList(imitator.getSurfaces()); // レンダリング
+				GL11.glEndList();
+			}
+			GL11.glPopMatrix();
 		}
 	}
 

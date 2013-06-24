@@ -16,24 +16,27 @@
 package mod.ymt.air.op;
 
 import java.util.Set;
-import mod.ymt.air.AirCraftCore;
+import mod.ymt.air.ScanTime;
 import net.minecraft.src.Block;
 
 /**
  * @author Yamato
  *
  */
-public class DirectionalOperator extends AbstractRotationOperator {
-	public DirectionalOperator() {
-		super(3, 0, 1, 2, 3);
+public class PistonOperator extends AbstractRotationOperator {
+	public PistonOperator() {
+		super(7, 2, 5, 3, 4);
 	}
 
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
-		result.add(AirCraftCore.getInstance().getBlockIdPyxis()); // この Operator で移動
-		result.add(Block.cocoaPlant.blockID);
-		result.add(Block.fenceGate.blockID);
-		result.add(Block.pumpkin.blockID);
-		result.add(Block.pumpkinLantern.blockID);
+		result.add(Block.pistonBase.blockID);
+		result.add(Block.pistonStickyBase.blockID);
+		result.add(Block.pistonExtension.blockID);
+	}
+
+	@Override
+	protected ScanTime getScanTime(int blockId) {
+		return blockId == Block.pistonExtension.blockID ? ScanTime.RedstoneWire : ScanTime.RedstoneOutput;
 	}
 }

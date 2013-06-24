@@ -16,6 +16,7 @@
 package mod.ymt.air.op;
 
 import java.util.Set;
+import mod.ymt.air.ScanTime;
 import net.minecraft.src.Block;
 
 /**
@@ -35,5 +36,10 @@ public class DoorOperator extends AbstractRotationOperator {
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.doorSteel.blockID);
 		result.add(Block.doorWood.blockID);
+	}
+
+	@Override
+	protected ScanTime getScanTime(int blockId) {
+		return ScanTime.RedstoneOutput;
 	}
 }

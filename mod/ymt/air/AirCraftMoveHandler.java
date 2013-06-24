@@ -32,6 +32,7 @@ public class AirCraftMoveHandler {
 	public static final byte PROC_DOWN = 6;
 	public static final byte PROC_RIGHT = 7;
 	public static final byte PROC_LEFT = 8;
+	public static final byte PROC_TERMINATE = 9;
 
 	public final EntityCraftCore owner;
 	public final int keepTime;
@@ -82,11 +83,11 @@ public class AirCraftMoveHandler {
 			craftMoving = true;
 		}
 		if (upSlide != 0) {
-			owner.motionY = 0.05 * upSlide;
+			owner.motionY = 0.08 * upSlide;
 			craftMoving = true;
 		}
 		if (rightTurn != 0) {
-			motionYaw = 0.5f * rightTurn;
+			motionYaw = 0.2f * rightTurn;
 			craftMoving = true;
 		}
 
@@ -106,6 +107,10 @@ public class AirCraftMoveHandler {
 		keepOnProcess();
 		if (sender == null || sender.equals(this.playerName)) {
 			switch (type) {
+				case PROC_TERMINATE:
+					processStop();
+					owner.terminate();
+					break;
 				case PROC_STOP:
 					if (craftMoving) {
 						processStop();
@@ -179,7 +184,7 @@ public class AirCraftMoveHandler {
 	}
 
 	protected void setForward(int value) {
-		this.forward = clip(value, -1, 5);
+		this.forward = clip(value, -1, 4);
 		if (forward <= 0) {
 			this.speedForward = forward;
 		}
@@ -189,14 +194,14 @@ public class AirCraftMoveHandler {
 	}
 
 	protected void setRightSlide(int value) {
-		this.rightSlide = clip(value, -2, 2);
+		this.rightSlide = clip(value, -3, 3);
 	}
 
 	protected void setRightTurn(int value) {
-		this.rightTurn = clip(value, -2, 2);
+		this.rightTurn = clip(value, -4, 4);
 	}
 
 	protected void setUpSlide(int value) {
-		this.upSlide = clip(value, -3, 3);
+		this.upSlide = clip(value, -4, 4);
 	}
 }

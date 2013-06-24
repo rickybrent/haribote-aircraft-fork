@@ -15,6 +15,7 @@
  */
 package mod.ymt.air;
 
+import java.util.Collection;
 import java.util.List;
 import mod.ymt.cmn.Coord3D;
 import mod.ymt.cmn.Utils;
@@ -65,12 +66,12 @@ public abstract class EntityImitator extends EntityCraftCore {
 	}
 
 	public void addClientSemiSurfaces(byte[] data) {
-		space.addClientNonSurfaceBlocks(newSerializer().deserialize(getThisBlockCoord(), data));
+		space.addClientNonSurfaceBlocks(deserializeClientBlocks(data));
 		glUpdateList = true;
 	}
 
 	public void addClientSurfaces(byte[] data) {
-		space.addClientSurfaceBlocks(newSerializer().deserialize(getThisBlockCoord(), data));
+		space.addClientSurfaceBlocks(deserializeClientBlocks(data));
 		glUpdateList = true;
 	}
 
@@ -190,6 +191,15 @@ public abstract class EntityImitator extends EntityCraftCore {
 	}
 
 	@Override
+	public void terminate() {
+		if (getStatus() == State.RUNNING) {
+			// adjustPositionAndRotation をクライアント側でも実施するように改良したほうがいいかなぁ
+			adjustPositionAndRotation();
+			setStatus(State.PUTBLOCK); // adjust 後には強制ブロック配置
+		}
+	}
+
+	@Override
 	public void writeEntityToNBT(NBTTagCompound tag) {
 		super.writeEntityToNBT(tag);
 		// とりあえず書き込みデータを用意する
@@ -215,6 +225,12 @@ public abstract class EntityImitator extends EntityCraftCore {
 		tag.setInteger("ThisBlockZ", this_z);
 		tag.setByteArray("Blocks", blockData);
 		tag.setTag("TileEntities", tileData);
+	}
+
+	protected Collection<BlockData> deserializeClientBlocks(byte[] data) {
+		List<BlockData> blocks = newSerializer().deserialize(getThisBlockCoord(), data);
+		toSafeClientBlocks(blocks);
+		return blocks;
 	}
 
 	@Override
@@ -332,7 +348,11 @@ public abstract class EntityImitator extends EntityCraftCore {
 		Materializer materializer = core.newMaterializer(worldObj, space);
 		if (materializer.putBlocks(x, y, z, d)) {
 			Utils.showMessage(worldObj, "HariboteAirCraft: Off");
-			setStatus(State.END);
+			setStatus(State.END); // END へ
+		}
+		else {
+			Utils.showMessage(worldObj, "HariboteAirCraft: Can't put block on here");
+			setStatus(State.RUNNING); // RUNNING へ戻す
 		}
 	}
 
@@ -370,6 +390,12 @@ public abstract class EntityImitator extends EntityCraftCore {
 		dataWatcher.updateObject(DWKEY_BLOCK_X, x);
 		dataWatcher.updateObject(DWKEY_BLOCK_Y, y);
 		dataWatcher.updateObject(DWKEY_BLOCK_Z, z);
+	}
+
+	protected void toSafeClientBlocks(List<BlockData> blocks) {
+		for (int i = blocks.size() - 1; 0 <= i; i--) {
+			blocks.set(i, core.toSafeClientBlock(blocks.get(i)));
+		}
 	}
 
 	public enum State {
