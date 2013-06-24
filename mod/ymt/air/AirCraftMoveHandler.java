@@ -68,6 +68,11 @@ public class AirCraftMoveHandler {
 		if (owner.isDead) {
 			return;
 		}
+		// For ships that cannot fly, but it would be better to have them fall, right?
+		// Also used to stop jitter when we are surfacing.
+		if ((!owner.canFly && upSlide != 0)) {
+			upSlide = 0;
+		}
 		if (forward != 0) {
 			double speed = speedForward * 0.1;
 			float angle = -(owner.rotationYaw + owner.getDirectionOffset() * 90) * (float) Math.PI / 180.0F;
@@ -89,6 +94,20 @@ public class AirCraftMoveHandler {
 		if (rightTurn != 0) {
 			motionYaw = 0.2f * rightTurn;
 			craftMoving = true;
+		}
+
+		// Added for floating detection
+		if (owner.canFloat) {
+			if (owner.doWaterCheck()) {
+				craftMoving = true;
+				owner.motionY = owner.motionY + 0.1;
+				if (upSlide < 0) {
+					upSlide = 0;
+				}
+			} else if (!owner.canFly) {
+				// Uncomment to stop ships from falling in the water.
+				owner.tryFall();
+			}
 		}
 
 		if (craftMoving) {

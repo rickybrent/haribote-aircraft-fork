@@ -341,17 +341,30 @@ public abstract class EntityImitator extends EntityCraftCore {
 		if (Utils.isClientSide(worldObj)) {
 			return;
 		}
+
+		double endY = posY;
+		// Fix for floating ships sinking on disembark.
+		if (canFloat && doWaterCheck()) {
+			endY = (double) Math.floor(posY+1);
+		} else {
+			endY = (double) Math.round(endY);
+		}
+		// Not sure of a better way to stop the player from falling through the floor:			
+		if (endY > posY) {
+			tryUpdatePosition(posX, endY, posZ, rotationYaw, rotationPitch);
+		}
+
 		int x = MathHelper.floor_double(posX);
-		int y = (int) Math.round(posY);
+		int y = (int) endY;
 		int z = MathHelper.floor_double(posZ);
 		int d = getDirection(this);
 		Materializer materializer = core.newMaterializer(worldObj, space);
 		if (materializer.putBlocks(x, y, z, d)) {
-			Utils.showMessage(worldObj, "HariboteAirCraft: Off");
+			showMessageToMyPlayer("HariboteAirCraft: Off");
 			setStatus(State.END); // END へ
 		}
 		else {
-			Utils.showMessage(worldObj, "HariboteAirCraft: Can't put block on here");
+			showMessageToMyPlayer("HariboteAirCraft: Can't put block on here");
 			setStatus(State.RUNNING); // RUNNING へ戻す
 		}
 	}
@@ -371,11 +384,57 @@ public abstract class EntityImitator extends EntityCraftCore {
 			// メッセージ表示
 			int all = space.countAllBlocks();
 			int surface = space.countSurfaceBlocks();
-			Utils.showMessage(worldObj, "HariboteAirCraft: Total " + all + " blocks, Surface " + surface + " blocks");
+		
+			String message = "HariboteAirCraft: Total " + all + " blocks, Surface " + surface + " blocks";
+
+			// Some special checks for flying/floating:
+			space.calculateSpecialMovementBlocks();
+			if (core.flyBlockPercent < 0) {
+				canFly = true; // Feature disabled, always fly
+			} else if (((100 * space.countFlyBlocks()) / all) >= core.flyBlockPercent) {
+				canFly = true;
+				message += " (You can fly)";
+			} else if (space.countFlyBlocks() > 1) {
+				message += " (Cannot fly, you need "
+						+ String.valueOf(getBlocksNeeded(all, space.countFlyBlocks(), core.flyBlockPercent))
+						+ " more lift)";
+			}
+			if (core.floatBlockPercent < 0) {
+				canFloat = false; // Feature disabled, never float.
+			} else if (core.floatBlockPercent == 0 || ((100 * space.countFloatBlocks())  / all) >= core.floatBlockPercent) {
+				canFloat = true;
+				message += " (You will float)";
+			} else {
+				message += " (Will sink, you need "
+						+ String.valueOf(getBlocksNeeded(all, space.countFloatBlocks(), core.floatBlockPercent))
+						+ " more buoyancy)";
+			}
+
+			showMessageToMyPlayer(message);
+
 			// Running
 			setStatus(State.RUNNING);
 		}
 	}
+
+	// Very hacky function to determine how many more of a block we need to add. (Not the best way at all)
+	private int getBlocksNeeded (int total, int currentMaterial, float materialPercent)
+	{
+		int newMaterial = currentMaterial;
+		while (((100 * newMaterial) / total) < materialPercent) {
+			int add = (int) Math.ceil(((((float) materialPercent/100) - ((float) newMaterial / total)) * total));
+			newMaterial += add;
+			total += add;
+		}
+
+		return newMaterial - currentMaterial;
+	}
+
+	// Does nothing, but is overriden by EntityPyxis.
+	protected void showMessageToMyPlayer(String msg)
+	{
+	}
+
 
 	protected void setStatus(State state) {
 		this.status = state;

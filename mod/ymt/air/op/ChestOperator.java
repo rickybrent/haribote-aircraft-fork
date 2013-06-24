@@ -23,8 +23,6 @@ import mod.ymt.cmn.Coord3D;
 import mod.ymt.cmn.Utils;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ModelChest;
-import net.minecraft.src.ModelLargeChest;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderManager;
@@ -39,8 +37,6 @@ import org.lwjgl.opengl.GL12;
  *
  */
 public class ChestOperator extends InventoryBlockOperator {
-	private final ModelChest modelChest = new ModelChest();
-	private final ModelChest modelLargeChest = new ModelLargeChest();
 
 	@Override
 	public boolean hasSpecialRender() {
@@ -54,76 +50,6 @@ public class ChestOperator extends InventoryBlockOperator {
 
 	@Override
 	public void renderBlockSpecial(RenderManager manager, RenderBlocks render, BlockData data) {
-		int metadata = data.metadata;
-
-		boolean adjacentChestZNeg = false;
-		boolean adjacentChestZPos = false;
-		boolean adjacentChestXNeg = false;
-		boolean adjacentChestXPos = false;
-		NBTTagCompound tag = getNBT(render.blockAccess, data.absPos);
-		if (tag != null) {
-			adjacentChestZNeg = tag.getBoolean("adjacentChestZNeg");
-			adjacentChestZPos = tag.getBoolean("adjacentChestZPos");
-			adjacentChestXNeg = tag.getBoolean("adjacentChestXNeg");
-			adjacentChestXPos = tag.getBoolean("adjacentChestXPos");
-		}
-		if (adjacentChestZNeg || adjacentChestXNeg) {
-			return;
-		}
-
-		ModelChest model;
-
-		if (!adjacentChestXPos && !adjacentChestZPos) {
-			model = modelChest;
-			if (data.block.blockID == Block.chestTrapped.blockID)
-				loadTexture(manager, "/item/chests/trap_small.png");
-			else
-				loadTexture(manager, "/item/chest.png");
-		}
-		else {
-			model = modelLargeChest;
-			if (data.block.blockID == Block.chestTrapped.blockID)
-				loadTexture(manager, "/item/chests/trap_large.png");
-			else
-				loadTexture(manager, "/item/largechest.png");
-		}
-
-		GL11.glPushMatrix();
-		{
-			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			GL11.glTranslatef(-0.5F, 1.0F, 0.5F);
-			GL11.glScalef(1.0F, -1.0F, -1.0F);
-			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-			short angle = 0;
-			if (metadata == 2) {
-				angle = 180;
-			}
-			if (metadata == 3) {
-				angle = 0;
-			}
-			if (metadata == 4) {
-				angle = 90;
-			}
-			if (metadata == 5) {
-				angle = -90;
-			}
-
-			if (metadata == 2 && adjacentChestXPos) {
-				GL11.glTranslatef(1.0F, 0.0F, 0.0F);
-			}
-			if (metadata == 5 && adjacentChestZPos) {
-				GL11.glTranslatef(0.0F, 0.0F, -1.0F);
-			}
-			GL11.glRotatef(angle, 0.0F, 1.0F, 0.0F);
-			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-
-			model.chestLid.rotateAngleX = 0;
-			model.renderAll();
-			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		}
-		GL11.glPopMatrix();
 	}
 
 	@Override
@@ -154,7 +80,7 @@ public class ChestOperator extends InventoryBlockOperator {
 		return tag;
 	}
 
-	private static NBTTagCompound getNBT(IBlockAccess blockAccess, Coord3D pos) {
+	protected static NBTTagCompound getNBT(IBlockAccess blockAccess, Coord3D pos) {
 		if (blockAccess instanceof ImitationSpace) {
 			ImitationSpace space = (ImitationSpace) blockAccess;
 			return space.getTileEntityData(pos);

@@ -39,7 +39,7 @@ public class EntityCraftBody extends EntityFollower {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void setNextPosition(double x, double y, double z, float yaw, float pitch, int turn) {
 		// CraftBody では yaw と pitch を扱わない

@@ -28,6 +28,8 @@ import net.minecraft.src.World;
  */
 public abstract class EntityCraftCore extends EntityAirCraft {
 	protected final List<EntityAirCraft> subEntity = new ArrayList<EntityAirCraft>();
+	public boolean canFly = false;
+	public boolean canFloat = false;
 
 	public EntityCraftCore(World world) {
 		super(world);
@@ -144,4 +146,45 @@ public abstract class EntityCraftCore extends EntityAirCraft {
 	protected static int getDirection(Entity ent) {
 		return MathHelper.floor_double((ent.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 	}
+
+
+	public String getPlayerName() {
+		// Return null here so we may try to call it when looking for the player
+		return null;
+	}
+
+	// For float:
+	protected boolean doWaterCheck()
+	{
+		if (handleWaterMovement()) {
+			return true;
+		}
+		for (EntityAirCraft ent: subEntity)
+		{
+			if (ent instanceof EntityFollower)
+			{
+				if (ent.handleWaterMovement())
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+	// For falling (float-capable, can't fly):
+	protected boolean tryFall()
+	{
+		double prevPosY = posY;
+		EntityAirCraft collided = tryUpdatePosition(posX, posY - 0.1, posZ, rotationYaw, rotationPitch);
+
+		if (collided == null) {
+			return true;
+		} else {
+			tryUpdatePosition(posX, prevPosY, posZ, rotationYaw, rotationPitch);
+			return false;
+		}
+	}
+
+
 }
