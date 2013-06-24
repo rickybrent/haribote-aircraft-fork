@@ -40,12 +40,12 @@ public class RenderImitator extends Render {
 			}
 		};
 	}
-
+	
 	@Override
 	public void doRender(Entity ent, double x, double y, double z, float yaw, float partialTickTime) {
 		this.renderImitator((EntityImitator) ent, x, y, z, reviceYaw(ent, partialTickTime), partialTickTime);
 	}
-
+	
 	public void renderImitator(EntityImitator imitator, double x, double y, double z, float yaw, float partialTickTime) {
 		if (imitator.glDisposed) { // 消滅している場合は何もしない
 			return;
@@ -76,7 +76,7 @@ public class RenderImitator extends Render {
 		}
 		GL11.glPopMatrix();
 	}
-
+	
 	protected void deleteGLCallList(EntityImitator imitator) {
 		if (imitator.glDisposed) {
 			return;
@@ -87,7 +87,7 @@ public class RenderImitator extends Render {
 		imitator.glCallList = -1;
 		imitator.glUpdateList = false;
 	}
-
+	
 	protected void prepareBlockList(Collection<BlockData> blocks) {
 		GL11.glPushMatrix();
 		{
@@ -112,7 +112,7 @@ public class RenderImitator extends Render {
 		}
 		GL11.glPopMatrix();
 	}
-
+	
 	protected void renderCustomBlocks(EntityImitator imitator) {
 		RenderHelper.disableStandardItemLighting();
 		GL11.glEnable(GL11.GL_BLEND);
@@ -133,7 +133,7 @@ public class RenderImitator extends Render {
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
-
+	
 	protected void updateBlockList(EntityImitator imitator) {
 		deleteGLCallList(imitator); // 最初にお掃除
 		imitator.glCallList = GLAllocation.generateDisplayLists(1);
@@ -148,7 +148,7 @@ public class RenderImitator extends Render {
 			GL11.glPopMatrix();
 		}
 	}
-
+	
 	private static float reviceYaw(Entity ent, float partialTickTime) {
 		float diff = ent.rotationYaw - ent.prevRotationYaw;
 		if (Math.abs(diff + 360) < Math.abs(diff)) {

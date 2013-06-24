@@ -27,26 +27,26 @@ import net.minecraft.src.NBTTagCompound;
  */
 public class NullOperator extends AbstractOperator {
 	public static final NullOperator INSTANCE = new NullOperator();
-
+	
 	private NullOperator() {
 		;
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		throw new UnsupportedOperationException();
 	}
-
+	
 	@Override
 	protected NBTTagCompound readFromTileEntity(Materializer owner, int blockId, int metadata, Coord3D pos) {
-		return null;	// TileEntity は読み取らない
+		return null; // TileEntity は読み取らない
 	}
-
+	
 	@Override
 	protected boolean setRealBlockWithRotation(Materializer owner, int blockId, int metadata, int x, int y, int z, int rotate) {
 		return setRealBlock(owner, blockId, metadata, x, y, z);
 	}
-
+	
 	@Override
 	protected void writeToTileEntity(Materializer owner, BlockData data, Coord3D target, int rotate) {
 		; // TileEntity に書き込まない

@@ -41,21 +41,21 @@ import org.lwjgl.opengl.GL12;
 public class ChestOperator extends InventoryBlockOperator {
 	private final ModelChest modelChest = new ModelChest();
 	private final ModelChest modelLargeChest = new ModelLargeChest();
-
+	
 	@Override
 	public boolean hasSpecialRender() {
 		return true;
 	}
-
+	
 	@Override
 	public void renderBlock(RenderBlocks render, BlockData data) {
 		;
 	}
-
+	
 	@Override
 	public void renderBlockSpecial(RenderManager manager, RenderBlocks render, BlockData data) {
 		int metadata = data.metadata;
-
+		
 		boolean adjacentChestZNeg = false;
 		boolean adjacentChestZPos = false;
 		boolean adjacentChestXNeg = false;
@@ -70,9 +70,9 @@ public class ChestOperator extends InventoryBlockOperator {
 		if (adjacentChestZNeg || adjacentChestXNeg) {
 			return;
 		}
-
+		
 		ModelChest model;
-
+		
 		if (!adjacentChestXPos && !adjacentChestZPos) {
 			model = modelChest;
 			if (data.block.blockID == Block.chestTrapped.blockID)
@@ -87,7 +87,7 @@ public class ChestOperator extends InventoryBlockOperator {
 			else
 				loadTexture(manager, "/item/largechest.png");
 		}
-
+		
 		GL11.glPushMatrix();
 		{
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -108,7 +108,7 @@ public class ChestOperator extends InventoryBlockOperator {
 			if (metadata == 5) {
 				angle = -90;
 			}
-
+			
 			if (metadata == 2 && adjacentChestXPos) {
 				GL11.glTranslatef(1.0F, 0.0F, 0.0F);
 			}
@@ -117,7 +117,7 @@ public class ChestOperator extends InventoryBlockOperator {
 			}
 			GL11.glRotatef(angle, 0.0F, 1.0F, 0.0F);
 			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-
+			
 			model.chestLid.rotateAngleX = 0;
 			model.renderAll();
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -125,19 +125,19 @@ public class ChestOperator extends InventoryBlockOperator {
 		}
 		GL11.glPopMatrix();
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.chest.blockID);
 		result.add(Block.chestTrapped.blockID);
 	}
-
+	
 	@Override
 	protected boolean canPlaceBlockAt(World world, int x, int y, int z, int blockId, int metadata) {
 		Block block = Utils.getBlock(blockId);
 		return block == null || block.canPlaceBlockAt(world, x, y, z); //
 	}
-
+	
 	@Override
 	protected NBTTagCompound readFromTileEntity(Materializer owner, int blockId, int metadata, Coord3D pos) {
 		NBTTagCompound tag = super.readFromTileEntity(owner, blockId, metadata, pos);
@@ -153,7 +153,7 @@ public class ChestOperator extends InventoryBlockOperator {
 		}
 		return tag;
 	}
-
+	
 	private static NBTTagCompound getNBT(IBlockAccess blockAccess, Coord3D pos) {
 		if (blockAccess instanceof ImitationSpace) {
 			ImitationSpace space = (ImitationSpace) blockAccess;

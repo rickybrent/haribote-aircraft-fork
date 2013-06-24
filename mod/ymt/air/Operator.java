@@ -25,14 +25,14 @@ import net.minecraft.src.RenderManager;
  */
 public interface Operator {
 	public boolean hasSpecialRender();
-
+	
 	public boolean putBlocksToWorld(Materializer owner, ScanTime time, BlockData data, Coord3D target, int rotate);
-
+	
 	public void register(AirCraftCore core);
-
+	
 	public boolean removeBlockFromWorld(Materializer owner, ScanTime time, Coord3D pos, Coord3D base);
 	
 	public void renderBlock(RenderBlocks render, BlockData data);
-
+	
 	public void renderBlockSpecial(RenderManager manager, RenderBlocks render, BlockData data);
 }

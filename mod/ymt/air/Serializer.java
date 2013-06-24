@@ -35,7 +35,7 @@ import net.minecraft.src.NBTTagCompound;
 public class Serializer {
 	private static final byte MAGIC_v1 = 0x4a;
 	protected final AirCraftCore core = AirCraftCore.getInstance();
-
+	
 	public List<BlockData> deserialize(Coord3D basePoint, byte[] data) {
 		List<BlockData> result = new ArrayList<BlockData>();
 		try {
@@ -73,7 +73,7 @@ public class Serializer {
 		}
 		return result;
 	}
-
+	
 	public NBTTagCompound deserializeNBT(byte[] data) {
 		if (data != null && 0 < data.length) {
 			try {
@@ -85,7 +85,7 @@ public class Serializer {
 		}
 		return null;
 	}
-
+	
 	public byte[] serialize(Collection<BlockData> blocks) {
 		try {
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -109,7 +109,7 @@ public class Serializer {
 			return new byte[0];
 		}
 	}
-
+	
 	public byte[] serializeNBT(NBTTagCompound tag) {
 		if (tag != null) {
 			try {

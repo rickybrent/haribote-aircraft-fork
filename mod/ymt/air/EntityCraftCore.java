@@ -28,15 +28,15 @@ import net.minecraft.src.World;
  */
 public abstract class EntityCraftCore extends EntityAirCraft {
 	protected final List<EntityAirCraft> subEntity = new ArrayList<EntityAirCraft>();
-
+	
 	public EntityCraftCore(World world) {
 		super(world);
 	}
-
+	
 	public void addSubEntity(EntityAirCraft ent) {
 		subEntity.add(ent);
 	}
-
+	
 	public boolean adjustPositionAndRotation() {
 		this.isAirBorne = true; // 強制更新
 		double x = Math.floor(posX) + 0.5;
@@ -45,22 +45,22 @@ public abstract class EntityCraftCore extends EntityAirCraft {
 		int d = getDirection(this);
 		return trySetPositionAndRotation(x, y, z, d * 90, 0);
 	}
-
+	
 	public int getDirectionOffset() {
 		return 0;
 	}
-
+	
 	public void moveCraft(double mx, double my, double mz, float yaw, float pitch) {
 		trySetPositionAndRotation(posX + mx, posY + my, posZ + mz, rotationYaw + yaw, rotationPitch + pitch);
 	}
-
+	
 	public abstract void processMove(String name, byte type);
-
+	
 	@Override
 	public void setPositionAndRotation(double x, double y, double z, float yaw, float pitch) {
 		trySetPositionAndRotation(x, y, z, yaw, pitch);
 	}
-
+	
 	@Override
 	public void stopImmediately() {
 		super.stopImmediately();
@@ -71,9 +71,9 @@ public abstract class EntityCraftCore extends EntityAirCraft {
 			}
 		}
 	}
-
+	
 	public abstract void terminate();
-
+	
 	private boolean trySetPositionAndRotation(double x, double y, double z, float yaw, float pitch) {
 		// 動かす前の値を保存
 		double prevPosX = posX;
@@ -93,7 +93,7 @@ public abstract class EntityCraftCore extends EntityAirCraft {
 			return false; // failure
 		}
 	}
-
+	
 	protected void cleanSubEntity() {
 		Iterator<EntityAirCraft> iter = subEntity.iterator();
 		while (iter.hasNext()) {
@@ -103,13 +103,13 @@ public abstract class EntityCraftCore extends EntityAirCraft {
 			}
 		}
 	}
-
+	
 	protected void onEntityHitBlocks(EntityAirCraft ent) {
 		core.debugPrint("onEntityHitBlocks %s", ent);
 	}
-
+	
 	protected abstract void onEntityPositionUpdate();
-
+	
 	protected EntityAirCraft tryUpdatePosition(double x, double y, double z, float yaw, float pitch) {
 		super.setNextPosition(x, y, z, yaw, pitch, 1); // これ setPositionAndRotation 使っちゃうと、描画のブレが大きくなっちゃうんだね……
 		if (isEntityHitBlocks()) {
@@ -126,7 +126,7 @@ public abstract class EntityCraftCore extends EntityAirCraft {
 		}
 		return null;
 	}
-
+	
 	public static EntityCraftCore getEntityCore(World world, String name) {
 		if (name != null) {
 			for (Object obj: world.loadedEntityList) {
@@ -140,7 +140,7 @@ public abstract class EntityCraftCore extends EntityAirCraft {
 		}
 		return null;
 	}
-
+	
 	protected static int getDirection(Entity ent) {
 		return MathHelper.floor_double((ent.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 	}

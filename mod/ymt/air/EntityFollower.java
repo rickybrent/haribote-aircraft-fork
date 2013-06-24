@@ -28,22 +28,22 @@ public abstract class EntityFollower extends EntityAirCraft {
 	protected double offsetY;
 	protected double offsetRotateYaw;
 	protected int ownerMissingTime = 0;
-
+	
 	protected EntityFollower(World world) {
 		super(world);
 	}
-
+	
 	protected EntityFollower(World world, String ownerName) {
 		super(world);
 		if (ownerName != null) {
 			setOwnerName(ownerName);
 		}
 	}
-
+	
 	public EntityAirCraft getOwner() {
 		return owner;
 	}
-
+	
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
@@ -59,7 +59,7 @@ public abstract class EntityFollower extends EntityAirCraft {
 			setDead();
 		}
 	}
-
+	
 	public void updateFollowerPosition() {
 		if (owner != null) {
 			double angle = offsetAngle + (offsetRotateYaw - owner.rotationYaw) / 180 * Math.PI;
@@ -69,7 +69,7 @@ public abstract class EntityFollower extends EntityAirCraft {
 			setNextPosition(x, y, z, (float) (owner.rotationYaw - offsetRotateYaw), 0, 1);
 		}
 	}
-
+	
 	protected void setOwner(EntityCraftCore owner) {
 		this.owner = owner;
 		if (owner != null) {

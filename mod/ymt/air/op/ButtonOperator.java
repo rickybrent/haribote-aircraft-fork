@@ -29,7 +29,7 @@ public class ButtonOperator extends AbstractRotationOperator {
 			rotation[i] &= 7; // 置くときにはボタンは常にオフ
 		}
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.stoneButton.blockID);

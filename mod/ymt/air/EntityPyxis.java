@@ -31,9 +31,9 @@ public class EntityPyxis extends EntityImitator {
 	 * DataWatcher -> PlayerName
 	 */
 	protected final int DWKEY_PLAYERNAME = 17;
-
+	
 	private final AirCraftMoveHandler moveHandler;
-
+	
 	public EntityPyxis(String playerName, World world, int blockId, int metadata, Coord3D basePoint) { // Server
 		super(world);
 		this.moveHandler = core.newMoveHandler(world, this, playerName);
@@ -42,22 +42,22 @@ public class EntityPyxis extends EntityImitator {
 		setPlayerName(playerName);
 		setThisBlock(blockId, metadata, basePoint);
 	}
-
+	
 	public EntityPyxis(World world) { // Client
 		super(world);
 		this.setSize(1, 0.5f);
 		this.moveHandler = core.newMoveHandler(world, this, null);
 	}
-
+	
 	@Override
 	public int getDirectionOffset() {
 		return getThisBlockMetadata() & 3;
 	}
-
+	
 	public String getPlayerName() {
 		return dataWatcher.getWatchableObjectString(DWKEY_PLAYERNAME);
 	}
-
+	
 	@Override
 	public boolean interact(EntityPlayer par1EntityPlayer) {
 		if (core.tryInteractServer(worldObj)) {
@@ -65,7 +65,7 @@ public class EntityPyxis extends EntityImitator {
 		}
 		return true;
 	}
-
+	
 	@Override
 	public void processMove(String sender, byte type) {
 		if (isDead) {
@@ -73,33 +73,33 @@ public class EntityPyxis extends EntityImitator {
 		}
 		moveHandler.process(sender, type);
 	}
-
+	
 	@Override
 	public void readEntityFromNBT(NBTTagCompound tag) {
 		super.readEntityFromNBT(tag);
 		setPlayerName(tag.getString("PlayerName"));
 	}
-
+	
 	public void setPlayerName(String name) {
 		dataWatcher.updateObject(DWKEY_PLAYERNAME, name);
 	}
-
+	
 	@Override
 	public void writeEntityToNBT(NBTTagCompound tag) {
 		super.writeEntityToNBT(tag);
 		tag.setString("PlayerName", getPlayerName());
 	}
-
+	
 	private String newName() {
 		return "EntityPyxis_" + entityId + "_" + System.currentTimeMillis();
 	}
-
+	
 	@Override
 	protected void entityInit() {
 		super.entityInit();
 		dataWatcher.addObject(DWKEY_PLAYERNAME, "");
 	}
-
+	
 	@Override
 	protected void onEntityHitBlocks(EntityAirCraft ent) {
 		super.onEntityHitBlocks(ent);
@@ -112,7 +112,7 @@ public class EntityPyxis extends EntityImitator {
 			showMessageToMyPlayer("AirCraft hits ground at " + x + ", " + y + ", " + z);
 		}
 	}
-
+	
 	@Override
 	protected void onEntityPositionUpdate() {
 		if (moveHandler.getPlayerName() == null) {
@@ -124,7 +124,7 @@ public class EntityPyxis extends EntityImitator {
 		}
 		moveHandler.onTick();
 	}
-
+	
 	protected void showMessageToMyPlayer(String msg) {
 		for (Object ent: worldObj.loadedEntityList) {
 			if (ent instanceof EntityPlayer) {

@@ -58,10 +58,10 @@ public class LeverOperator extends AbstractRotationOperator {
 			rotation[metadata] = (metadata & 8) | (d & 7);
 		}
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.lever.blockID);
 	}
-
+	
 }

@@ -31,7 +31,7 @@ public class AnvilOperator extends AbstractRotationOperator {
 				rotation[i] = i & ~1;
 		}
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.anvil.blockID);

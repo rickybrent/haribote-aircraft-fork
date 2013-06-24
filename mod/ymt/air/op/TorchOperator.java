@@ -27,14 +27,14 @@ public class TorchOperator extends AbstractRotationOperator {
 	public TorchOperator() {
 		super(3, 2, 4, 1);
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.torchWood.blockID);
 		result.add(Block.torchRedstoneActive.blockID);
 		result.add(Block.torchRedstoneIdle.blockID);
 	}
-
+	
 	@Override
 	protected ScanTime getScanTime(int blockId) {
 		return ScanTime.Delicate;

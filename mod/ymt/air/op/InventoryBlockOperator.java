@@ -38,7 +38,7 @@ public class InventoryBlockOperator extends AbstractRotationOperator {
 	public InventoryBlockOperator() {
 		super(7, 2, 5, 3, 4);
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.furnaceIdle.blockID);
@@ -48,7 +48,7 @@ public class InventoryBlockOperator extends AbstractRotationOperator {
 		result.add(Block.dropper.blockID);
 		result.add(Block.hopperBlock.blockID);
 	}
-
+	
 	protected void dropItemFromNBT(World world, NBTTagCompound tag, double x, double y, double z) {
 		if (Utils.isClientSide(world)) {
 			return;
@@ -77,7 +77,7 @@ public class InventoryBlockOperator extends AbstractRotationOperator {
 			}
 		}
 	}
-
+	
 	@Override
 	protected void onCancelSetRealBlock(Materializer owner, BlockData data, Coord3D target) {
 		super.onCancelSetRealBlock(owner, data, target);
@@ -91,7 +91,7 @@ public class InventoryBlockOperator extends AbstractRotationOperator {
 			}
 		}
 	}
-
+	
 	@Override
 	protected NBTTagCompound readFromTileEntity(Materializer owner, int blockId, int metadata, Coord3D pos) {
 		NBTTagCompound tag = super.readFromTileEntity(owner, blockId, metadata, pos);
@@ -100,7 +100,7 @@ public class InventoryBlockOperator extends AbstractRotationOperator {
 		clearInventory(tile);
 		return tag;
 	}
-
+	
 	@Override
 	protected boolean setRealBlock(Materializer owner, int blockId, int metadata, int x, int y, int z) {
 		boolean result = super.setRealBlock(owner, blockId, metadata, x, y, z);
@@ -109,7 +109,7 @@ public class InventoryBlockOperator extends AbstractRotationOperator {
 		}
 		return result;
 	}
-
+	
 	public static void clearInventory(IInventory inventory) {
 		if (inventory != null) {
 			for (int i = inventory.getSizeInventory() - 1; 0 <= i; i--) {
@@ -117,7 +117,7 @@ public class InventoryBlockOperator extends AbstractRotationOperator {
 			}
 		}
 	}
-
+	
 	public static void clearInventory(TileEntity tile) {
 		if (tile instanceof IInventory) {
 			clearInventory((IInventory) tile);

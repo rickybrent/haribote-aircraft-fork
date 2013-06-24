@@ -33,10 +33,10 @@ public class AirCraftMoveHandler {
 	public static final byte PROC_RIGHT = 7;
 	public static final byte PROC_LEFT = 8;
 	public static final byte PROC_TERMINATE = 9;
-
+	
 	public final EntityCraftCore owner;
 	public final int keepTime;
-
+	
 	public String playerName = null;
 	private boolean craftMoving = false;
 	private int speedForward = 0;
@@ -45,26 +45,26 @@ public class AirCraftMoveHandler {
 	private int rightSlide = 0;
 	private int rightTurn = 0;
 	private int movingCount = 0;
-
+	
 	public AirCraftMoveHandler(EntityCraftCore owner, String playerName, int keepTime) {
 		this.owner = owner;
 		this.playerName = playerName;
 		this.keepTime = 0 < keepTime ? keepTime : 20 * 60;
 	}
-
+	
 	public String getPlayerName() {
 		return playerName;
 	}
-
+	
 	public boolean isCraftMoving() {
 		return craftMoving;
 	}
-
+	
 	public void onTick() {
 		craftMoving = false;
 		owner.motionX = owner.motionY = owner.motionZ = 0;
 		float motionYaw = 0;
-
+		
 		if (owner.isDead) {
 			return;
 		}
@@ -90,7 +90,7 @@ public class AirCraftMoveHandler {
 			motionYaw = 0.2f * rightTurn;
 			craftMoving = true;
 		}
-
+		
 		if (craftMoving) {
 			// 移動
 			owner.moveCraft(owner.motionX, owner.motionY, owner.motionZ, motionYaw, 0);
@@ -99,7 +99,7 @@ public class AirCraftMoveHandler {
 			}
 		}
 	}
-
+	
 	public void process(String sender, byte type) {
 		if (owner.isDead) {
 			return;
@@ -150,7 +150,7 @@ public class AirCraftMoveHandler {
 			}
 		}
 	}
-
+	
 	public void processStop() {
 		owner.stopImmediately();
 		setForward(0);
@@ -159,22 +159,22 @@ public class AirCraftMoveHandler {
 		setUpSlide(0);
 		keepOnProcess();
 	}
-
+	
 	public void setPlayerName(String name) {
 		this.playerName = name;
 	}
-
+	
 	public void stopAllServerAndClient() {
 		AirCraftCore core = AirCraftCore.getInstance();
 		if (Utils.isServerSide(owner.worldObj)) {
 			core.net.sendMoveStopToServerAndClients(playerName);
 		}
 	}
-
+	
 	private void keepOnProcess() {
 		movingCount = 0;
 	}
-
+	
 	protected int clip(int value, int min, int max) {
 		if (value < min)
 			return min;
@@ -182,7 +182,7 @@ public class AirCraftMoveHandler {
 			return max;
 		return value;
 	}
-
+	
 	protected void setForward(int value) {
 		this.forward = clip(value, -1, 4);
 		if (forward <= 0) {
@@ -192,15 +192,15 @@ public class AirCraftMoveHandler {
 			this.speedForward = MathHelper.floor_double(Math.pow(2, forward - 1));
 		}
 	}
-
+	
 	protected void setRightSlide(int value) {
 		this.rightSlide = clip(value, -3, 3);
 	}
-
+	
 	protected void setRightTurn(int value) {
 		this.rightTurn = clip(value, -4, 4);
 	}
-
+	
 	protected void setUpSlide(int value) {
 		this.upSlide = clip(value, -4, 4);
 	}

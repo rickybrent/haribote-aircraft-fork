@@ -56,12 +56,12 @@ public class DelicateOperator extends AbstractOperator {
 		result.add(Block.pressurePlateGold.blockID); // 金の感圧板
 		result.add(Block.pressurePlateIron.blockID); // 鉄の感圧板
 	}
-
+	
 	@Override
 	protected ScanTime getScanTime(int blockID) {
 		return blockID == Block.redstoneWire.blockID ? ScanTime.RedstoneWire : ScanTime.Delicate;
 	}
-
+	
 	@Override
 	protected boolean setRealBlockWithRotation(Materializer owner, int blockId, int metadata, int x, int y, int z, int rotate) {
 		return setRealBlock(owner, blockId, metadata, x, y, z);

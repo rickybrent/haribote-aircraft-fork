@@ -27,7 +27,7 @@ public class DirectionalOperator extends AbstractRotationOperator {
 	public DirectionalOperator() {
 		super(3, 0, 1, 2, 3);
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(AirCraftCore.getInstance().getBlockIdPyxis()); // この Operator で移動

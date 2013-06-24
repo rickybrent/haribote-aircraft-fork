@@ -45,7 +45,7 @@ public class NormalOperator extends AbstractOperator {
 		result.add(Block.web.blockID);
 		result.add(Block.cloth.blockID);
 		result.add(Block.blockGold.blockID);
-		result.add(Block.blockSteel.blockID);
+		result.add(Block.blockIron.blockID);
 		result.add(Block.stoneDoubleSlab.blockID); // 石のハーフブロック二段重ね
 		result.add(Block.stoneSingleSlab.blockID); // 石のハーフブロック
 		result.add(Block.brick.blockID); // レンガ
@@ -95,7 +95,7 @@ public class NormalOperator extends AbstractOperator {
 		result.add(Block.enchantmentTable.blockID); // エンチャ台
 		result.add(Block.commandBlock.blockID); // コマンドブロック
 	}
-
+	
 	@Override
 	protected boolean setRealBlockWithRotation(Materializer owner, int blockId, int metadata, int x, int y, int z, int rotate) {
 		return setRealBlock(owner, blockId, metadata, x, y, z);

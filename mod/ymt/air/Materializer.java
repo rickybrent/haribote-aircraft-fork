@@ -35,36 +35,36 @@ import net.minecraft.src.World;
  */
 public class Materializer {
 	private final AirCraftCore core = AirCraftCore.getInstance();
-
+	
 	private final int blocklimit;
-
+	
 	public final World world;
 	public final ImitationSpace space;
 	private final Set<Integer> moveable;
-
+	
 	public Materializer(World world, ImitationSpace space, int blocklimit, Set<Integer> moveable) {
 		this.world = world;
 		this.blocklimit = blocklimit;
 		this.space = space;
 		this.moveable = moveable;
 	}
-
+	
 	public void addCoreBlock(int x, int y, int z, int blockId, int metadata) {
 		BlockData data = BlockData.valueOf(blockId, metadata, Coord3D.ZERO, new Coord3D(x, y, z));
 		if (data != null) { // ありえないはずだけど
 			space.setBlockData(data);
 		}
 	}
-
+	
 	public NBTTagCompound getImitationTileEntity(Coord3D absPos) {
 		return space.getTileEntityData(absPos);
 	}
-
+	
 	public boolean putBlocks(int x, int y, int z, int rotate) {
 		// y 座標の下から配置していく
 		List<BlockData> allBlocks = new LinkedList<BlockData>(space.getAllBlocks());
 		Collections.sort(allBlocks, new BlockDataBottomUpComparator());
-
+		
 		// 一番上と一番下が、ワールド内に収まっていることを確認する
 		if (!allBlocks.isEmpty()) {
 			int minRelY = Integer.MAX_VALUE, maxRelY = Integer.MIN_VALUE;
@@ -81,50 +81,50 @@ public class Materializer {
 				return false;
 			}
 		}
-
+		
 		// 順に配置
 		processPutBlocks(ScanTime.Normal, allBlocks, x, y, z, rotate);
 		processPutBlocks(ScanTime.Delicate, allBlocks, x, y, z, rotate);
 		processPutBlocks(ScanTime.RedstoneWire, allBlocks, x, y, z, rotate);
 		processPutBlocks(ScanTime.RedstoneOutput, allBlocks, x, y, z, rotate);
-
+		
 		return true;
 	}
-
+	
 	public boolean removeBlocks(int x, int y, int z) {
 		core.debugPrint("remove start!");
-
+		
 		// 探索
 		Coord3D base = new Coord3D(x, y, z);
 		List<Coord3D> allPoints = new LinkedList<Coord3D>(traceBlock(base)); // 絶対座標系
 		core.debugPrint("get %s blocks traced", allPoints.size());
-
+		
 		// y 座標の上から削除していく
 		Collections.sort(allPoints, new Coord3DTopDownComparator());
-
+		
 		// 引っぺがす
 		processRemoveBlocks(ScanTime.RedstoneOutput, allPoints, base);
 		processRemoveBlocks(ScanTime.RedstoneWire, allPoints, base);
 		processRemoveBlocks(ScanTime.Delicate, allPoints, base);
 		processRemoveBlocks(ScanTime.Normal, allPoints, base);
-
+		
 		core.debugPrint("remove %s blocks", space.countAllBlocks());
-
+		
 		// 表面計算
 		space.updateServerSurface();
 		core.debugPrint("surface %s blocks", space.countSurfaceBlocks());
-
+		
 		return true;
 	}
-
+	
 	public void setImitationBlock(BlockData block) {
 		space.setBlockData(block);
 	}
-
+	
 	public void setImitationTileEntity(NBTTagCompound tag) {
 		space.setTileEntityData(tag);
 	}
-
+	
 	public boolean setRealBlock(int x, int y, int z, int blockId, int metadata) {
 		if (Utils.isServerSide(world)) {
 			world.setBlock(x, y, z, blockId, metadata, 2);
@@ -132,7 +132,7 @@ public class Materializer {
 		}
 		return false;
 	}
-
+	
 	private boolean isSurface(World world, Set<Coord3D> all, Coord3D pos) {
 		for (Coord3D np: pos.getNeighbor()) {
 			if (!all.contains(np)) {
@@ -145,7 +145,7 @@ public class Materializer {
 		}
 		return false;
 	}
-
+	
 	private void processPutBlocks(ScanTime time, List<BlockData> allBlocks, int x, int y, int z, int rotate) {
 		Iterator<BlockData> iter = allBlocks.iterator();
 		while (iter.hasNext()) {
@@ -159,7 +159,7 @@ public class Materializer {
 			}
 		}
 	}
-
+	
 	private void processRemoveBlocks(ScanTime time, List<Coord3D> allPoints, Coord3D base) {
 		Iterator<Coord3D> iter = allPoints.iterator();
 		while (iter.hasNext()) {
@@ -174,13 +174,13 @@ public class Materializer {
 			}
 		}
 	}
-
+	
 	protected boolean isMoveable(int blockId) {
 		if (blockId == Block.bedrock.blockID)
 			return false;
 		return moveable.contains(blockId);
 	}
-
+	
 	protected Set<Coord3D> traceBlock(Coord3D base) {
 		int surfaceCount = 1; // コアブロックがすでに1個追加されてるはずなので1スタート
 		Set<Coord3D> result = new HashSet<Coord3D>();
@@ -191,7 +191,7 @@ public class Materializer {
 		}
 		return result;
 	}
-
+	
 	protected int traceBlock(Set<Coord3D> allblock, Coord3D pos, Deque<Coord3D> nextPos) {
 		if (pos.y < 0) {
 			return 0;

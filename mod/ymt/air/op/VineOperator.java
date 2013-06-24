@@ -38,12 +38,12 @@ public class VineOperator extends AbstractRotationOperator {
 			rotation[metadata] = d;
 		}
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.vine.blockID);
 	}
-
+	
 	@Override
 	protected ScanTime getScanTime(int blockId) {
 		return ScanTime.Delicate;

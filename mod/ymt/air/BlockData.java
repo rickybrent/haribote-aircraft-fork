@@ -31,7 +31,7 @@ public class BlockData {
 	public final int metadata;
 	public final Coord3D relPos;
 	public final Coord3D absPos;
-
+	
 	public BlockData(Block block, int metadata, Coord3D relPos, Coord3D absPos) {
 		if (block == null || relPos == null || absPos == null)
 			throw new NullPointerException("argument must not null");
@@ -40,7 +40,7 @@ public class BlockData {
 		this.relPos = relPos;
 		this.absPos = absPos;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -60,7 +60,7 @@ public class BlockData {
 			return false;
 		return true;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -71,12 +71,12 @@ public class BlockData {
 		result = prime * result + absPos.hashCode();
 		return result;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "BlockData [block=" + block + ", metadata=" + metadata + ", relPos=" + relPos + ", absPos=" + absPos + "]";
 	}
-
+	
 	public void write(DataOutput output) throws IOException {
 		int blocks = pack(block.blockID, metadata);
 		if ((blocks & 0xFF00) != 0xFF00 && isByte(relPos.x) && isByte(relPos.y) && isByte(relPos.z)) {
@@ -97,11 +97,11 @@ public class BlockData {
 		}
 		// 書き込みサイズが変わると Packet250CustomPayload 用の分割数が変わってくるので注意
 	}
-
+	
 	public static int pack(int blockId, int metadata) {
 		return (blockId << 4) | (metadata & 15);
 	}
-
+	
 	public static BlockData read(DataInput input, Coord3D base) throws IOException {
 		byte first = input.readByte();
 		if (first == -1) {
@@ -115,15 +115,15 @@ public class BlockData {
 			return valueOf(unpackBlockId(block), unpackMetadata(block), relPos, relPos.add(base));
 		}
 	}
-
+	
 	public static int unpackBlockId(int block) {
 		return block >>> 4;
 	}
-
+	
 	public static int unpackMetadata(int block) {
 		return block & 15;
 	}
-
+	
 	public static BlockData valueOf(int blockId, int metadata, Coord3D relPos, Coord3D absPos) {
 		Block block = Utils.getBlock(blockId);
 		if (block != null) {
@@ -131,7 +131,7 @@ public class BlockData {
 		}
 		return null;
 	}
-
+	
 	private static boolean isByte(int value) {
 		return ((byte) value) == value;
 	}

@@ -31,13 +31,13 @@ public class DoorOperator extends AbstractRotationOperator {
 			rotation[metadata] = (metadata & ~3) | (d & 3);
 		}
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
-		result.add(Block.doorSteel.blockID);
+		result.add(Block.doorIron.blockID);
 		result.add(Block.doorWood.blockID);
 	}
-
+	
 	@Override
 	protected ScanTime getScanTime(int blockId) {
 		return ScanTime.RedstoneOutput;

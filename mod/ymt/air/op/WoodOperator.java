@@ -33,7 +33,7 @@ public class WoodOperator extends AbstractRotationOperator {
 				rotation[metadata] = (metadata & 3) | 4;
 		}
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.wood.blockID);

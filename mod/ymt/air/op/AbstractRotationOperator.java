@@ -23,17 +23,17 @@ import mod.ymt.air.Materializer;
  */
 public abstract class AbstractRotationOperator extends AbstractOperator {
 	protected final int[] rotation = new int[16];
-
+	
 	protected AbstractRotationOperator() {
 		for (int i = 0; i < rotation.length; i++) {
 			rotation[i] = i; // デフォルト
 		}
 	}
-
+	
 	protected AbstractRotationOperator(int a, int b, int c, int d) {
 		this(15, a, b, c, d);
 	}
-
+	
 	protected AbstractRotationOperator(int mask, int a, int b, int c, int d) {
 		for (int i = 0; i < rotation.length; i++) {
 			int direction = i & mask;
@@ -49,7 +49,7 @@ public abstract class AbstractRotationOperator extends AbstractOperator {
 			rotation[i] &= 15;
 		}
 	}
-
+	
 	protected int getRotatedMetadata(int metadata, int rotate) {
 		for (int i = 0; i < rotate; i++) {
 			if (0 <= metadata && metadata < rotation.length) {
@@ -58,7 +58,7 @@ public abstract class AbstractRotationOperator extends AbstractOperator {
 		}
 		return metadata;
 	}
-
+	
 	@Override
 	protected boolean setRealBlockWithRotation(Materializer owner, int blockId, int metadata, int x, int y, int z, int rotate) {
 		return setRealBlock(owner, blockId, getRotatedMetadata(metadata, rotate), x, y, z);

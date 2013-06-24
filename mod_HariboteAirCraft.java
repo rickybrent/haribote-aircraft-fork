@@ -76,7 +76,7 @@ public class mod_HariboteAirCraft extends BaseMod {
 
 	@Override
 	public String getVersion() {
-		return "151v3 voyager";
+		return "152v2 ulysses";
 	}
 
 	@Override

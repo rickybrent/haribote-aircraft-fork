@@ -26,11 +26,11 @@ public class EntityCraftBody extends EntityFollower {
 	public EntityCraftBody(World world) {
 		this(world, null);
 	}
-
+	
 	public EntityCraftBody(World world, String ownerName) {
 		super(world, ownerName);
 	}
-
+	
 	@Override
 	public boolean interact(EntityPlayer player) {
 		if (core.tryInteractServer(worldObj)) {
@@ -39,7 +39,7 @@ public class EntityCraftBody extends EntityFollower {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void setNextPosition(double x, double y, double z, float yaw, float pitch, int turn) {
 		// CraftBody では yaw と pitch を扱わない

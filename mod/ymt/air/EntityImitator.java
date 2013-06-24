@@ -48,15 +48,15 @@ public abstract class EntityImitator extends EntityCraftCore {
 	 * DataWatcher -> z
 	 */
 	protected final int DWKEY_BLOCK_Z = 15;
-
+	
 	protected final ImitationSpace space;
 	protected State status = State.INIT;
 	protected boolean requestSurfaceFromClient = false;
-
+	
 	protected int glCallList = -1;
 	protected boolean glUpdateList = true;
 	protected boolean glDisposed = false;
-
+	
 	protected EntityImitator(World world) {
 		super(world);
 		this.space = new ImitationSpace(world);
@@ -64,24 +64,24 @@ public abstract class EntityImitator extends EntityCraftCore {
 		this.ignoreFrustumCheck = true; // このエンティティはカメラ外でもレンダリングする
 		core.registerImitator(this);
 	}
-
+	
 	public void addClientSemiSurfaces(byte[] data) {
 		space.addClientNonSurfaceBlocks(deserializeClientBlocks(data));
 		glUpdateList = true;
 	}
-
+	
 	public void addClientSurfaces(byte[] data) {
 		space.addClientSurfaceBlocks(deserializeClientBlocks(data));
 		glUpdateList = true;
 	}
-
+	
 	public void addClientTileData(byte[] data) {
 		NBTTagCompound tag = newSerializer().deserializeNBT(data);
 		if (tag != null) {
 			space.setTileEntityData(tag);
 		}
 	}
-
+	
 	public synchronized void dispose() {
 		if (!glDisposed) {
 			if (0 < glCallList) {
@@ -92,19 +92,19 @@ public abstract class EntityImitator extends EntityCraftCore {
 			glDisposed = true;
 		}
 	}
-
+	
 	public ImitationSpace getImitationSpace() {
 		return space;
 	}
-
+	
 	public State getStatus() {
 		return status;
 	}
-
+	
 	public List<BlockData> getSurfaces() {
 		return space.getSurfaceBlocks();
 	}
-
+	
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate(); // TODO ディメンジョン移動できるようにする
@@ -145,7 +145,7 @@ public abstract class EntityImitator extends EntityCraftCore {
 			}
 		}
 	}
-
+	
 	@Override
 	public void readEntityFromNBT(NBTTagCompound tag) {
 		super.readEntityFromNBT(tag);
@@ -157,15 +157,15 @@ public abstract class EntityImitator extends EntityCraftCore {
 		int this_z = tag.getInteger("ThisBlockZ");
 		byte[] blocksData = tag.getByteArray("Blocks");
 		NBTTagList tileData = tag.getTagList("TileEntities");
-
+		
 		// エンティティ情報を反映
 		setStatus(State.fromCode(status));
-
+		
 		// このブロック情報を反映
 		setThisBlock(block, this_x, this_y, this_z);
 		// 保持しているブロック情報を反映
 		space.setServerAllBlocks(newSerializer().deserialize(new Coord3D(this_x, this_y, this_z), blocksData));
-
+		
 		// 保持している TileEntity 情報を反映
 		for (int i = 0; i < tileData.tagCount(); i++) {
 			NBTBase base = tileData.tagAt(i);
@@ -175,11 +175,11 @@ public abstract class EntityImitator extends EntityCraftCore {
 				core.debugPrint("EntityImitator#writeEntityToNBT unknown tag %s", base);
 		}
 	}
-
+	
 	public void requestSurfaceFromClient() {
 		requestSurfaceFromClient = true;
 	}
-
+	
 	@Override
 	public void setDead() {
 		try {
@@ -189,7 +189,7 @@ public abstract class EntityImitator extends EntityCraftCore {
 			dispose();
 		}
 	}
-
+	
 	@Override
 	public void terminate() {
 		if (getStatus() == State.RUNNING) {
@@ -198,7 +198,7 @@ public abstract class EntityImitator extends EntityCraftCore {
 			setStatus(State.PUTBLOCK); // adjust 後には強制ブロック配置
 		}
 	}
-
+	
 	@Override
 	public void writeEntityToNBT(NBTTagCompound tag) {
 		super.writeEntityToNBT(tag);
@@ -211,12 +211,12 @@ public abstract class EntityImitator extends EntityCraftCore {
 		int this_z = base.z;
 		byte[] blockData = newSerializer().serialize(space.getAllBlocks());
 		NBTTagList tileData = new NBTTagList();
-
+		
 		// 保持している TileEntity 情報を書き込み
 		for (NBTTagCompound t: space.getAllTileEntities()) {
 			tileData.appendTag(t.copy());
 		}
-
+		
 		// セット
 		tag.setByte("ImitatorStatus", status);
 		tag.setInteger("ThisBlock", block);
@@ -226,13 +226,13 @@ public abstract class EntityImitator extends EntityCraftCore {
 		tag.setByteArray("Blocks", blockData);
 		tag.setTag("TileEntities", tileData);
 	}
-
+	
 	protected Collection<BlockData> deserializeClientBlocks(byte[] data) {
 		List<BlockData> blocks = newSerializer().deserialize(getThisBlockCoord(), data);
 		toSafeClientBlocks(blocks);
 		return blocks;
 	}
-
+	
 	@Override
 	protected void entityInit() {
 		super.entityInit();
@@ -241,7 +241,7 @@ public abstract class EntityImitator extends EntityCraftCore {
 		dataWatcher.addObject(DWKEY_BLOCK_Y, 0);
 		dataWatcher.addObject(DWKEY_BLOCK_Z, 0);
 	}
-
+	
 	@Override
 	protected void finalize() throws Throwable {
 		try {
@@ -251,26 +251,26 @@ public abstract class EntityImitator extends EntityCraftCore {
 			dispose();
 		}
 	}
-
+	
 	protected int getThisBlock() {
 		return dataWatcher.getWatchableObjectInt(DWKEY_BLOCK);
 	}
-
+	
 	protected Coord3D getThisBlockCoord() {
 		int x = dataWatcher.getWatchableObjectInt(DWKEY_BLOCK_X);
 		int y = dataWatcher.getWatchableObjectInt(DWKEY_BLOCK_Y);
 		int z = dataWatcher.getWatchableObjectInt(DWKEY_BLOCK_Z);
 		return new Coord3D(x, y, z);
 	}
-
+	
 	protected int getThisBlockId() {
 		return BlockData.unpackBlockId(getThisBlock());
 	}
-
+	
 	protected int getThisBlockMetadata() {
 		return BlockData.unpackMetadata(getThisBlock());
 	}
-
+	
 	protected void initCraftBody(int x, int y, int z) {
 		String ownerName = getOwnerName();
 		int size = core.getCraftBodySize();
@@ -292,11 +292,17 @@ public abstract class EntityImitator extends EntityCraftCore {
 			}
 		}
 	}
-
+	
 	protected Serializer newSerializer() {
 		return new Serializer();
 	}
-
+	
+	protected void toSafeClientBlocks(List<BlockData> blocks) {
+		for (int i = blocks.size() - 1; 0 <= i; i--) {
+			blocks.set(i, core.toSafeClientBlock(blocks.get(i)));
+		}
+	}
+	
 	protected void processSendSurfaceToClient() {
 		// 準表面ブロック送信
 		processSendSurfaceToClient(false); // さきにこっちを送信しておく
@@ -305,7 +311,7 @@ public abstract class EntityImitator extends EntityCraftCore {
 		// タイルデータ送信
 		processSendTileDataToclient();
 	}
-
+	
 	protected void processSendSurfaceToClient(boolean isSurface) {
 		// 小データ 5byte、大データ 15byte、Packet250CustomPayload の最大は 32767
 		// 2048 ブロック毎に区切れば、小 4 + 1 + 5 * 2048 = 10245、大 4 + 1 + 15 * 2048 = 30725 で収まる
@@ -321,7 +327,7 @@ public abstract class EntityImitator extends EntityCraftCore {
 				core.net.sendSemiSurfaceToClient(entityId, data);
 		}
 	}
-
+	
 	protected void processSendTileDataToclient() {
 		final Serializer serializer = newSerializer();
 		for (NBTTagCompound tag: space.getAllTileEntities()) {
@@ -336,7 +342,7 @@ public abstract class EntityImitator extends EntityCraftCore {
 			}
 		}
 	}
-
+	
 	protected void putBlock() { // Side: Server
 		if (Utils.isClientSide(worldObj)) {
 			return;
@@ -355,7 +361,7 @@ public abstract class EntityImitator extends EntityCraftCore {
 			setStatus(State.RUNNING); // RUNNING へ戻す
 		}
 	}
-
+	
 	protected void removeBlock() { // Side: Server
 		if (Utils.isClientSide(worldObj)) {
 			return;
@@ -376,40 +382,34 @@ public abstract class EntityImitator extends EntityCraftCore {
 			setStatus(State.RUNNING);
 		}
 	}
-
+	
 	protected void setStatus(State state) {
 		this.status = state;
 	}
-
+	
 	protected void setThisBlock(int blockId, int metadata, Coord3D point) {
 		setThisBlock(BlockData.pack(blockId, metadata), point.x, point.y, point.z);
 	}
-
+	
 	protected void setThisBlock(int block, int x, int y, int z) {
 		dataWatcher.updateObject(DWKEY_BLOCK, block);
 		dataWatcher.updateObject(DWKEY_BLOCK_X, x);
 		dataWatcher.updateObject(DWKEY_BLOCK_Y, y);
 		dataWatcher.updateObject(DWKEY_BLOCK_Z, z);
 	}
-
-	protected void toSafeClientBlocks(List<BlockData> blocks) {
-		for (int i = blocks.size() - 1; 0 <= i; i--) {
-			blocks.set(i, core.toSafeClientBlock(blocks.get(i)));
-		}
-	}
-
+	
 	public enum State {
 		INIT((byte) 0), RUNNING((byte) 1), PUTBLOCK((byte) 2), END((byte) 3);
 		private final byte code;
-
+		
 		private State(byte code) {
 			this.code = code;
 		}
-
+		
 		public byte getCode() {
 			return code;
 		}
-
+		
 		public static State fromCode(byte code) {
 			for (State stt: values()) {
 				if (stt.getCode() == code) {

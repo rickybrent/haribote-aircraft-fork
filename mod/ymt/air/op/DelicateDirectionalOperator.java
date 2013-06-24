@@ -33,7 +33,7 @@ public class DelicateDirectionalOperator extends DirectionalOperator {
 		result.add(Block.redstoneComparatorIdle.blockID);
 		result.add(Block.redstoneComparatorActive.blockID);
 	}
-
+	
 	@Override
 	protected ScanTime getScanTime(int blockId) {
 		return ScanTime.Delicate;

@@ -27,12 +27,12 @@ public class LadderOperator extends AbstractRotationOperator {
 	public LadderOperator() {
 		super(2, 5, 3, 4);
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.ladder.blockID);
 	}
-
+	
 	@Override
 	protected ScanTime getScanTime(int blockId) {
 		return ScanTime.Delicate;

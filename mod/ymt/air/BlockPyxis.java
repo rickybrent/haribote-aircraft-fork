@@ -34,7 +34,7 @@ import net.minecraft.src.World;
  */
 public class BlockPyxis extends Block {
 	private Icon[] icons = new Icon[6];
-
+	
 	public BlockPyxis(int blockId) {
 		super(blockId, Material.rock);
 		setHardness(0.5F);
@@ -43,9 +43,9 @@ public class BlockPyxis extends Block {
 		setLightValue(1.0F); // 光源になるよ
 		this.setCreativeTab(CreativeTabs.tabTransport); // 乗り物タブ
 	}
-
+	
 	@Override
-	public Icon getBlockTextureFromSideAndMetadata(int side, int metadata) {
+	public Icon getIcon(int side, int metadata) {
 		switch (side) {
 			case 0: // 底面
 				return icons[0];
@@ -55,12 +55,12 @@ public class BlockPyxis extends Block {
 				return icons[1];
 		}
 	}
-
+	
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
 		AirCraftCore core = AirCraftCore.getInstance();
@@ -73,23 +73,13 @@ public class BlockPyxis extends Block {
 		}
 		return true;
 	}
-
+	
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player, ItemStack stack) {
 		int metadata = getDirection(player);
 		world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
 	}
-
-	protected Entity newPyxis(World world, EntityPlayer player, int metadata, Coord3D basePos) {
-		Entity ent = new EntityPyxis(player.getEntityName(), world, blockID, metadata, basePos);
-		ent.setPosition(basePos.x + 0.5, basePos.y, basePos.z + 0.5);
-		return ent;
-	}
-
-	private static int getDirection(Entity ent) {
-		return MathHelper.floor_double((ent.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-	}
-
+	
 	@Override
 	public void registerIcons(IconRegister ir) {
 		icons = new Icon[]{
@@ -100,5 +90,15 @@ public class BlockPyxis extends Block {
 			ir.registerIcon("mod.ymt.air.py_top2"),
 			ir.registerIcon("mod.ymt.air.py_top3"),
 		};
+	}
+	
+	protected Entity newPyxis(World world, EntityPlayer player, int metadata, Coord3D basePos) {
+		Entity ent = new EntityPyxis(player.getEntityName(), world, blockID, metadata, basePos);
+		ent.setPosition(basePos.x + 0.5, basePos.y, basePos.z + 0.5);
+		return ent;
+	}
+	
+	private static int getDirection(Entity ent) {
+		return MathHelper.floor_double((ent.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
 	}
 }

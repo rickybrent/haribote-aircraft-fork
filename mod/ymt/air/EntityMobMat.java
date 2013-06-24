@@ -30,18 +30,18 @@ public class EntityMobMat extends EntityFollower {
 		setSize(0.5f, 0.0625f);
 		this.noClip = false;
 	}
-
+	
 	public EntityMobMat(World world, String ownerName) {
 		super(world, ownerName);
 		setSize(0.5f, 0.0625f);
 		this.noClip = false;
 	}
-
+	
 	@Override
 	public AxisAlignedBB getBoundingBox() {
 		return null;
 	}
-
+	
 	@Override
 	public boolean interact(EntityPlayer player) {
 		if (core.tryInteractServer(worldObj)) {
@@ -52,7 +52,7 @@ public class EntityMobMat extends EntityFollower {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
@@ -61,7 +61,7 @@ public class EntityMobMat extends EntityFollower {
 			setDead();
 		}
 	}
-
+	
 	@Override
 	public void setDead() {
 		if (riddenByEntity != null) {
@@ -69,7 +69,7 @@ public class EntityMobMat extends EntityFollower {
 		}
 		super.setDead();
 	}
-
+	
 	@Override
 	protected void capturePassengers() {
 		; // なにもしない

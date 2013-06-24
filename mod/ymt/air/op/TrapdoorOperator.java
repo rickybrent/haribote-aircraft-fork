@@ -27,12 +27,12 @@ public class TrapdoorOperator extends AbstractRotationOperator {
 	public TrapdoorOperator() {
 		super(3, 0, 3, 1, 2);
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.trapdoor.blockID);
 	}
-
+	
 	@Override
 	protected ScanTime getScanTime(int blockId) {
 		return ScanTime.RedstoneOutput;

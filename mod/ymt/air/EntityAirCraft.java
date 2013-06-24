@@ -42,11 +42,11 @@ public abstract class EntityAirCraft extends Entity {
 	 */
 	protected final int DWKEY_OWNERNAME = 11;
 	protected boolean captured = false;
-
+	
 	protected double nextPosX, nextPosY, nextPosZ;
 	protected float nextYaw, nextPitch;
 	protected int turnProgress = 0;
-
+	
 	protected EntityAirCraft(World world) {
 		super(world);
 		this.preventEntitySpawning = true;
@@ -56,51 +56,51 @@ public abstract class EntityAirCraft extends Entity {
 		this.isImmuneToFire = true; // 炎は無敵
 		this.noClip = true;
 	}
-
+	
 	@Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, int par2) {
 		return false; // 無敵
 	}
-
+	
 	@Override
 	public boolean canBeCollidedWith() {
 		return !isDead;
 	}
-
+	
 	@Override
 	public AxisAlignedBB getBoundingBox() {
 		return this.boundingBox;
 	}
-
+	
 	@Override
 	public float getBrightness(float par1) {
 		return worldObj.provider.lightBrightnessTable[15]; // TODO 15をもっと賢く
 	}
-
+	
 	public String getOwnerName() {
 		return dataWatcher.getWatchableObjectString(DWKEY_OWNERNAME);
 	}
-
+	
 	public List<Entity> getRiddingEntities() {
 		List<Entity> result = new ArrayList<Entity>();
 		findRiddingEntities(result);
 		return result;
 	}
-
+	
 	@Override
 	public float getShadowSize() {
 		return 0.0F;
 	}
-
+	
 	public boolean hasOwnerName() {
 		return Utils.hasString(getOwnerName());
 	}
-
+	
 	public boolean isEntityHitBlocks() {
 		AxisAlignedBB aabb = getBoundingBox();
-		return aabb != null && worldObj.getAllCollidingBoundingBoxes(aabb).size() != 0;
+		return aabb != null && worldObj.getCollidingBlockBounds(aabb).size() != 0;
 	}
-
+	
 	@Override
 	public void onEntityUpdate() {
 		if (this.ridingEntity != null && this.ridingEntity.isDead) {
@@ -112,7 +112,7 @@ public abstract class EntityAirCraft extends Entity {
 		this.prevPosZ = this.posZ;
 		this.prevRotationPitch = this.rotationPitch;
 		this.prevRotationYaw = this.rotationYaw;
-
+		
 		if (isDead) {
 			return;
 		}
@@ -140,7 +140,7 @@ public abstract class EntityAirCraft extends Entity {
 			}
 		}
 	}
-
+	
 	@Override
 	public void readEntityFromNBT(NBTTagCompound tag) {
 		String name = tag.getString("OwnerName");
@@ -148,7 +148,7 @@ public abstract class EntityAirCraft extends Entity {
 			setOwnerName(name);
 		}
 	}
-
+	
 	public void setNextPosition(double x, double y, double z, float yaw, float pitch, int turn) {
 		nextPosX = x;
 		nextPosY = y;
@@ -165,24 +165,24 @@ public abstract class EntityAirCraft extends Entity {
 			super.setRotation(nextYaw, nextPitch);
 		}
 	}
-
+	
 	@Override
 	public void setPositionAndRotation(double x, double y, double z, float yaw, float pitch) {
 		super.setPosition(x, y, z);
 		super.setRotation(yaw, pitch);
 	}
-
+	
 	@Override
 	public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int turn) {
 		setNextPosition(x, y, z, yaw, pitch, 5);
 	}
-
+	
 	public void stopImmediately() {
 		// このエンティティの停止
 		this.isAirBorne = true; // 強制更新
 		setNextPosition(posX, posY, posZ, rotationYaw, rotationPitch, 0); // 現在位置を即座に更新
 	}
-
+	
 	@Override
 	public void writeEntityToNBT(NBTTagCompound tag) {
 		String name = getOwnerName();
@@ -190,7 +190,7 @@ public abstract class EntityAirCraft extends Entity {
 			tag.setString("OwnerName", name);
 		}
 	}
-
+	
 	protected void capturePassenger(Entity ent) {
 		EntityMobMat mat = new EntityMobMat(worldObj, getOwnerName());
 		// double y = Math.max(ent.posY, this.posY + this.height); // 位置補正
@@ -199,7 +199,7 @@ public abstract class EntityAirCraft extends Entity {
 		worldObj.spawnEntityInWorld(mat);
 		ent.mountEntity(mat); // ent を mat に載せる
 	}
-
+	
 	protected void capturePassengers() {
 		for (Entity ent: getRiddingEntities()) {
 			if (isUnCapturedPassenger(ent)) {
@@ -207,12 +207,12 @@ public abstract class EntityAirCraft extends Entity {
 			}
 		}
 	}
-
+	
 	@Override
 	protected void entityInit() {
 		dataWatcher.addObject(DWKEY_OWNERNAME, "");
 	}
-
+	
 	protected void findRiddingEntities(List<Entity> result) {
 		// 参考: World#selectEntitiesWithinAABB
 		AxisAlignedBB aabb = getBoundingBox();
@@ -235,13 +235,13 @@ public abstract class EntityAirCraft extends Entity {
 			}
 		}
 	}
-
+	
 	protected boolean isUnCapturedPassenger(Entity ent) {
 		if (ent.ridingEntity != null)
 			return false;
 		return ent instanceof EntityLiving || ent instanceof EntityItem || ent instanceof EntityMinecart || ent instanceof EntityBoat;
 	}
-
+	
 	protected void setOwnerName(String name) {
 		if (name == null) {
 			name = "";

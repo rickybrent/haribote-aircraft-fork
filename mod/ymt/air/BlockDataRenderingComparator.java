@@ -32,7 +32,7 @@ class BlockDataRenderingComparator implements Comparator<BlockData> {
 			}
 		}
 	}
-
+	
 	@Override
 	public int compare(BlockData o1, BlockData o2) {
 		int result = 0;

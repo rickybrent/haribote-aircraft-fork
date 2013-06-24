@@ -28,11 +28,11 @@ import org.lwjgl.opengl.GL11;
 public class RenderDebugEntity extends Render {
 	private final RenderBlocks blockRenderer = new RenderBlocks();
 	private final Block block;
-
+	
 	public RenderDebugEntity(Block block) {
 		this.block = block;
 	}
-
+	
 	@Override
 	public void doRender(Entity ent, double x, double y, double z, float yaw, float partialTickTime) {
 		GL11.glPushMatrix();

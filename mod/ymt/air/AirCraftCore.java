@@ -63,56 +63,56 @@ public class AirCraftCore extends NekonoteCore {
 	private static final boolean DEBUG_RENDER_INVISIBLE = false;
 	private static final boolean DEBUG_RENDER_MAT = false;
 	private static final AirCraftCore instance = new AirCraftCore();
-
+	
 	private int blockIdPyxis = 209;
 	private int blocklimit = 2000;
 	private int craftBodySize = -1;
 	private int moveKeepTime = 20 * 60;
-
+	
 	private int entityIdPyxis = 0;
 	private int entityIdInvisible = 0;
 	private int entityIdMobMat = 0;
-
+	
 	private BaseMod baseMod = null;
 	private Block blockPyxis = null;
-
+	
 	public final AirCraftNetHandler net = new AirCraftNetHandler(this);
 	private final Operator[] blockops = new Operator[Block.blocksList.length];
 	private final Collection<EntityImitator> imitatorServer = new WeakEntityCollection<EntityImitator>();
 	private final Collection<EntityImitator> imitatorClient = new WeakEntityCollection<EntityImitator>();
-
+	
 	public final Set<Integer> targetBlockId = new TreeSet<Integer>();
 	public final Set<Integer> appendixBlockId = new TreeSet<Integer>();
 	public final Set<Integer> ignoredBlockId = new TreeSet<Integer>();
-
+	
 	private AirCraftCore() {
 		;
 	}
-
+	
 	public void addRenderer(Map map) {
 		// Imitator
 		if (DEBUG_RENDER_IMITATOR)
 			map.put(EntityImitator.class, new RenderDebugEntity(Block.blockDiamond));
 		else
 			map.put(EntityImitator.class, new RenderPyxis());
-
+		
 		// Invisible
 		if (DEBUG_RENDER_INVISIBLE)
 			map.put(EntityCraftBody.class, new RenderDebugEntity(Block.glass));
 		else
 			map.put(EntityCraftBody.class, new RenderNothing());
-
+		
 		// Mat
 		if (DEBUG_RENDER_MAT)
 			map.put(EntityMobMat.class, new RenderDebugEntity(Block.cloth));
 		else
 			map.put(EntityMobMat.class, new RenderNothing());
 	}
-
+	
 	public int getBlockIdPyxis() {
 		return blockIdPyxis;
 	}
-
+	
 	public Operator getBlockOperator(int blockId) {
 		if (0 < blockId && blockId < blockops.length) {
 			Operator result = blockops[blockId];
@@ -122,15 +122,15 @@ public class AirCraftCore extends NekonoteCore {
 		}
 		return NullOperator.INSTANCE;
 	}
-
+	
 	public Block getBlockPyxis() {
 		return blockPyxis;
 	}
-
+	
 	public int getCraftBodySize() {
 		return craftBodySize;
 	}
-
+	
 	public Set<Integer> getDefaultMoveableSet() {
 		Set<Integer> result = new TreeSet<Integer>();
 		for (int i = 0; i < blockops.length; i++) { // target が未指定の時には defaultMoveableSet
@@ -140,43 +140,43 @@ public class AirCraftCore extends NekonoteCore {
 		}
 		return result;
 	}
-
+	
 	public Set<Integer> getMoveableBlockIds() {
 		Set<Integer> result = new HashSet<Integer>();
-
+		
 		// targetBlockId
 		if (targetBlockId.isEmpty())
 			result.addAll(getDefaultMoveableSet());
 		else
 			result.addAll(targetBlockId);
-
+		
 		// appendixBlockId
 		result.addAll(appendixBlockId);
-
+		
 		// ignoredBlockId
 		result.removeAll(ignoredBlockId);
-
+		
 		// その他
 		result.remove(0); // 空気ブロックは移動禁止
 		result.remove(Block.bedrock.blockID); // 岩盤は移動禁止
-
+		
 		// 完成
 		return result;
 	}
-
+	
 	public int getMoveKeepTime() {
 		return moveKeepTime;
 	}
-
+	
 	public Materializer newMaterializer(World world, ImitationSpace space) {
 		Set<Integer> moveable = Utils.isServerSide(world) ? getMoveableBlockIds() : new TreeSet<Integer>();
 		return new Materializer(world, space, blocklimit, moveable);
 	}
-
+	
 	public AirCraftMoveHandler newMoveHandler(World worldObj, EntityCraftCore craftCore, String playerName) {
 		return new AirCraftMoveHandler(craftCore, playerName, getMoveKeepTime());
 	}
-
+	
 	public void processAppendSemiSurface(int entId, byte[] data) {
 		synchronized (imitatorClient) {
 			for (EntityImitator cli: imitatorClient) {
@@ -187,7 +187,7 @@ public class AirCraftCore extends NekonoteCore {
 			}
 		}
 	}
-
+	
 	public void processAppendSurface(int entId, byte[] data) {
 		synchronized (imitatorClient) {
 			for (EntityImitator cli: imitatorClient) {
@@ -198,7 +198,7 @@ public class AirCraftCore extends NekonoteCore {
 			}
 		}
 	}
-
+	
 	public void processAppendTileEntityData(int entId, byte[] data) {
 		synchronized (imitatorClient) {
 			for (EntityImitator cli: imitatorClient) {
@@ -209,15 +209,15 @@ public class AirCraftCore extends NekonoteCore {
 			}
 		}
 	}
-
+	
 	public void processMoveClient(byte type, String name) {
 		processMove(imitatorClient, type, name);
 	}
-
+	
 	public void processMoveServer(byte type, String name) {
 		processMove(imitatorServer, type, name);
 	}
-
+	
 	public void processRequestSurfaces(int entId) {
 		synchronized (imitatorServer) {
 			for (EntityImitator svr: imitatorServer) {
@@ -228,7 +228,7 @@ public class AirCraftCore extends NekonoteCore {
 			}
 		}
 	}
-
+	
 	public void registerImitator(EntityImitator imitator) {
 		if (Utils.isServerSide(imitator.worldObj)) {
 			synchronized (imitatorServer) {
@@ -241,19 +241,19 @@ public class AirCraftCore extends NekonoteCore {
 			}
 		}
 	}
-
+	
 	public void setBaseMod(BaseMod baseMod) {
 		this.baseMod = baseMod;
 	}
-
+	
 	public void setBlockIdPyxis(int blockIdPyxis) {
 		this.blockIdPyxis = blockIdPyxis;
 	}
-
+	
 	public void setBlocklimit(int blocklimit) {
 		this.blocklimit = blocklimit;
 	}
-
+	
 	public void setBlockOperator(int blockId, Operator operator) {
 		if (0 < blockId && blockId < blockops.length) {
 			if (blockops[blockId] != null) {
@@ -262,15 +262,15 @@ public class AirCraftCore extends NekonoteCore {
 			blockops[blockId] = operator;
 		}
 	}
-
+	
 	public void setCraftBodySize(int craftBodySize) {
 		this.craftBodySize = craftBodySize;
 	}
-
+	
 	public void setMoveKeepTime(int moveKeepTime) {
 		this.moveKeepTime = moveKeepTime;
 	}
-
+	
 	public Entity spawnEntity(int entId, World world, double x, double y, double z) {
 		Entity result = null;
 		{
@@ -286,7 +286,7 @@ public class AirCraftCore extends NekonoteCore {
 		}
 		return result;
 	}
-
+	
 	public BlockData toSafeClientBlock(BlockData data) {
 		// TODO renderStrategy オプションを追加
 		// 2 = 変換しない
@@ -305,7 +305,7 @@ public class AirCraftCore extends NekonoteCore {
 		debugPrint("toSafeClientBlock [%s:%s] %s", data.block.blockID, data.metadata, data.block);
 		return new BlockData(Block.cloth, data.metadata, data.relPos, data.absPos);
 	}
-
+	
 	protected Operator[] getDefaultOperators() {
 		return new Operator[]{
 			new NormalOperator(),
@@ -332,7 +332,7 @@ public class AirCraftCore extends NekonoteCore {
 		//			new EndPortalOperator(),
 		};
 	}
-
+	
 	@Override
 	protected void init() {
 		if (0 < blockIdPyxis) {
@@ -343,7 +343,7 @@ public class AirCraftCore extends NekonoteCore {
 			ModLoader.addRecipe(new ItemStack(blockPyxis), new Object[]{
 				" C ", "DGD", "OOO", 'C', Item.compass, 'D', Item.diamond, 'G', Block.blockGold, 'O', Block.obsidian
 			});
-
+			
 			// エンティティ登録
 			ModLoader.registerEntityID(EntityPyxis.class, "HAC_Pyxis", entityIdPyxis = Utils.getUnusedEntityID());
 			ModLoader.registerEntityID(EntityCraftBody.class, "HAC_CraftBody", entityIdInvisible = Utils.getUnusedEntityID());
@@ -351,17 +351,17 @@ public class AirCraftCore extends NekonoteCore {
 			ModLoader.addEntityTracker(baseMod, EntityPyxis.class, entityIdPyxis, 256, 4, true); // 描写距離とりあえず広めにとる
 			ModLoader.addEntityTracker(baseMod, EntityCraftBody.class, entityIdInvisible, 32, 4, true);
 			ModLoader.addEntityTracker(baseMod, EntityMobMat.class, entityIdMobMat, 32, 4, true);
-
+			
 			// チャネル登録
 			net.registerPacketChannel(baseMod);
-
+			
 			// Operator 登録
 			for (Operator op: getDefaultOperators()) {
 				op.register(this);
 			}
 		}
 	}
-
+	
 	protected void processMove(Collection<EntityImitator> imitators, byte type, String name) {
 		synchronized (imitators) {
 			for (EntityCraftCore imitator: imitators) {
@@ -371,7 +371,7 @@ public class AirCraftCore extends NekonoteCore {
 			}
 		}
 	}
-
+	
 	public static AirCraftCore getInstance() {
 		return instance;
 	}

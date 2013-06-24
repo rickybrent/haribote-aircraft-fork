@@ -26,7 +26,7 @@ public class StairsOperator extends AbstractRotationOperator {
 	public StairsOperator() {
 		super(3, 0, 2, 1, 3);
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.stairsWoodOak.blockID);
@@ -38,6 +38,6 @@ public class StairsOperator extends AbstractRotationOperator {
 		result.add(Block.stairsWoodSpruce.blockID);
 		result.add(Block.stairsWoodBirch.blockID);
 		result.add(Block.stairsWoodJungle.blockID);
-		result.add(Block.stairCompactNetherQuartz.blockID); // ネザー水晶の階段
+		result.add(Block.stairsNetherQuartz.blockID); // ネザー水晶の階段
 	}
 }

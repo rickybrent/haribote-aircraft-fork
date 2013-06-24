@@ -60,19 +60,19 @@ public class RailPoweredOperator extends AbstractRotationOperator {
 			rotation[metadata] = (metadata & 8) | (d & 7);
 		}
 	}
-
+	
 	@Override
 	protected void addMoveableBlockIds(Set<Integer> result) {
 		result.add(Block.railPowered.blockID);
 		result.add(Block.railDetector.blockID);
 		result.add(Block.railActivator.blockID); // 作動レール
 	}
-
+	
 	@Override
 	protected ScanTime getScanTime(int blockId) {
 		return ScanTime.Delicate;
 	}
-
+	
 	@Override
 	protected boolean setRealBlock(Materializer owner, int blockId, int metadata, int x, int y, int z) {
 		boolean result = super.setRealBlock(owner, blockId, metadata, x, y, z);

@@ -31,7 +31,7 @@ public class FluidOperator extends AbstractOperator {
 		result.add(Block.lavaMoving.blockID);
 		result.add(Block.lavaStill.blockID);
 	}
-
+	
 	@Override
 	protected boolean setRealBlockWithRotation(Materializer owner, int blockId, int metadata, int x, int y, int z, int rotate) {
 		// Fluid はたぶん metadata を書き換えなくても……動く？

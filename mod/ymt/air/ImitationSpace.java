@@ -43,7 +43,7 @@ import net.minecraft.src.World;
  */
 public class ImitationSpace implements IBlockAccess {
 	private final World parent;
-
+	
 	/**
 	 * 元座標から BlockData へのマップ
 	 */
@@ -64,11 +64,11 @@ public class ImitationSpace implements IBlockAccess {
 	 * カスタムレンダリングするブロック
 	 */
 	private final List<BlockData> customRenderBlocks = new ArrayList<BlockData>();
-
+	
 	public ImitationSpace(World parent) {
 		this.parent = parent;
 	}
-
+	
 	public void addClientNonSurfaceBlocks(Collection<BlockData> blocks) {
 		if (blocks.isEmpty()) {
 			AirCraftCore.getInstance().debugPrint("ImitationSpace#addClientNonSurfaceBlocks empty data");
@@ -79,7 +79,7 @@ public class ImitationSpace implements IBlockAccess {
 			}
 		}
 	}
-
+	
 	public void addClientSurfaceBlocks(Collection<BlockData> surfaces) {
 		if (surfaces.isEmpty()) {
 			AirCraftCore.getInstance().debugPrint("ImitationSpace#addClientSurfaceBlocks empty data");
@@ -91,22 +91,22 @@ public class ImitationSpace implements IBlockAccess {
 			appendClientSurface(surfaces); // 表面を差し替え
 		}
 	}
-
+	
 	public void clear() {
 		this.allBlocks.clear();
 		this.surfaceBlocks.clear();
 		this.semiSurfaceBlocks.clear();
 		this.customRenderBlocks.clear();
 	}
-
+	
 	public int countAllBlocks() {
 		return allBlocks.size();
 	}
-
+	
 	public int countSurfaceBlocks() {
 		return surfaceBlocks.size();
 	}
-
+	
 	@Override
 	public boolean doesBlockHaveSolidTopSurface(int x, int y, int z) { // RenderBlocks で使用
 		Block block = Utils.getBlock(getBlockId(x, y, z));
@@ -120,25 +120,25 @@ public class ImitationSpace implements IBlockAccess {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public boolean extendedLevelsInChunkCache() { // 未使用
 		throw new UnsupportedOperationException("method not implemented");
 	}
-
+	
 	public Collection<BlockData> getAllBlocks() {
 		return allBlocks.values();
 	}
-
+	
 	public List<NBTTagCompound> getAllTileEntities() {
 		return new ArrayList<NBTTagCompound>(allTileData.values());
 	}
-
+	
 	@Override
 	public BiomeGenBase getBiomeGenForCoords(int x, int z) { // RenderBlocks で使用
 		return BiomeGenBase.plains;
 	}
-
+	
 	@Override
 	public int getBlockId(int x, int y, int z) { // RenderBlocks で使用
 		BlockData data = getBlockData(x, y, z);
@@ -147,7 +147,7 @@ public class ImitationSpace implements IBlockAccess {
 		}
 		return 0;
 	}
-
+	
 	@Override
 	public Material getBlockMaterial(int x, int y, int z) { // RenderBlocks で使用
 		BlockData data = getBlockData(x, y, z);
@@ -156,7 +156,7 @@ public class ImitationSpace implements IBlockAccess {
 		}
 		return Material.air;
 	}
-
+	
 	@Override
 	public int getBlockMetadata(int x, int y, int z) { // RenderBlocks で使用
 		BlockData data = getBlockData(x, y, z);
@@ -165,65 +165,65 @@ public class ImitationSpace implements IBlockAccess {
 		}
 		return 0;
 	}
-
+	
 	@Override
 	public TileEntity getBlockTileEntity(int x, int y, int z) { // 未使用
 		throw new UnsupportedOperationException("method not implemented");
 	}
-
+	
 	@Override
 	public float getBrightness(int x, int y, int z, int var4) { // RenderBlocks で使用
 		return 0;
 	}
-
+	
 	public List<BlockData> getCustomRenderBlocks() {
 		return customRenderBlocks;
 	}
-
+	
 	@Override
 	public int getHeight() { // RenderBlocks で使用
 		return parent.getHeight();
 	}
-
+	
 	@Override
 	public float getLightBrightness(int x, int y, int z) { // RenderBlocks で使用
 		return parent.provider.lightBrightnessTable[15]; // TODO 15をもっと賢く
 	}
-
+	
 	@Override
 	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int limit) { // RenderBlocks で使用
 		int skyBrightness = 15;
 		int blockBrightness = 13;
 		return skyBrightness << 20 | blockBrightness << 4;
 	}
-
+	
 	public List<BlockData> getSemiSurfaceBlocks() {
 		return semiSurfaceBlocks;
 	}
-
+	
 	public List<BlockData> getSurfaceBlocks() {
 		return surfaceBlocks;
 	}
-
+	
 	public NBTTagCompound getTileEntityData(Coord3D absPos) {
 		return allTileData.get(absPos);
 	}
-
+	
 	@Override
 	public Vec3Pool getWorldVec3Pool() { // RenderBlocks で使用
 		return parent.getWorldVec3Pool();
 	}
-
+	
 	@Override
 	public boolean isAirBlock(int x, int y, int z) { // RenderBlocks で使用
 		return this.getBlockId(x, y, z) == 0;
 	}
-
+	
 	@Override
 	public boolean isBlockNormalCube(int x, int y, int z) { // RenderBlocks で使用
 		return Block.isNormalCube(this.getBlockId(x, y, z));
 	}
-
+	
 	@Override
 	public boolean isBlockOpaqueCube(int x, int y, int z) { // RenderBlocks で使用
 		BlockData data = getBlockData(x, y, z);
@@ -232,7 +232,7 @@ public class ImitationSpace implements IBlockAccess {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public int isBlockProvidingPowerTo(int x, int y, int z, int direction) { // 未使用
 		BlockData data = getBlockData(x, y, z);
@@ -241,13 +241,13 @@ public class ImitationSpace implements IBlockAccess {
 		}
 		return 0; // デフォルト
 	}
-
+	
 	public void setBlockData(BlockData data) {
 		if (data != null) {
 			allBlocks.put(data.absPos, data);
 		}
 	}
-
+	
 	public void setServerAllBlocks(Collection<BlockData> all) {
 		clear();
 		if (all.isEmpty()) {
@@ -260,14 +260,14 @@ public class ImitationSpace implements IBlockAccess {
 			updateServerSurface(); // Surface 更新
 		}
 	}
-
+	
 	public void setTileEntityData(NBTTagCompound tag) {
 		int x = tag.getInteger("x");
 		int y = tag.getInteger("y");
 		int z = tag.getInteger("z");
 		allTileData.put(new Coord3D(x, y, z), tag);
 	}
-
+	
 	public void updateServerSurface() {
 		// 表面計算
 		surfaceBlocks.clear();
@@ -276,7 +276,7 @@ public class ImitationSpace implements IBlockAccess {
 				surfaceBlocks.add(ent.getValue());
 			}
 		}
-
+		
 		// 準表面計算
 		Map<Coord3D, BlockData> _all = new HashMap<Coord3D, BlockData>(allBlocks);
 		for (BlockData surface: surfaceBlocks) {
@@ -289,7 +289,7 @@ public class ImitationSpace implements IBlockAccess {
 			}
 		}
 	}
-
+	
 	protected void appendClientSurface(Collection<BlockData> surfaces) {
 		AirCraftCore core = AirCraftCore.getInstance();
 		// いま追加されていないブロックのみを追加する
@@ -310,11 +310,11 @@ public class ImitationSpace implements IBlockAccess {
 			Collections.sort(customRenderBlocks, new BlockDataRenderingComparator());
 		}
 	}
-
+	
 	protected BlockData getBlockData(int x, int y, int z) {
 		return allBlocks.get(new Coord3D(x, y, z));
 	}
-
+	
 	private static boolean isSurface(Map<Coord3D, BlockData> blocks, Coord3D here) {
 		for (Coord3D np: here.getNeighbor()) {
 			BlockData data = blocks.get(np);

@@ -40,12 +40,12 @@ import net.minecraft.src.World;
  *
  */
 public abstract class AbstractOperator implements Operator {
-
+	
 	@Override
 	public boolean hasSpecialRender() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean putBlocksToWorld(Materializer owner, ScanTime time, BlockData data, Coord3D target, int rotate) {
 		if (time == getScanTime(data.block.blockID)) {
@@ -54,7 +54,7 @@ public abstract class AbstractOperator implements Operator {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void register(AirCraftCore core) {
 		Set<Integer> moveable = new HashSet<Integer>();
@@ -63,7 +63,7 @@ public abstract class AbstractOperator implements Operator {
 			core.setBlockOperator(blockId, this);
 		}
 	}
-
+	
 	@Override
 	public boolean removeBlockFromWorld(Materializer owner, ScanTime time, Coord3D pos, Coord3D base) {
 		int id = owner.world.getBlockId(pos.x, pos.y, pos.z);
@@ -74,7 +74,7 @@ public abstract class AbstractOperator implements Operator {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void renderBlock(RenderBlocks render, BlockData data) {
 		Coord3D absPos = data.absPos;
@@ -86,18 +86,18 @@ public abstract class AbstractOperator implements Operator {
 		tessellator.setTranslation(0, 0, 0);
 		tessellator.draw();
 	}
-
+	
 	@Override
 	public void renderBlockSpecial(RenderManager manager, RenderBlocks render, BlockData data) {
 		;
 	}
-
+	
 	protected abstract void addMoveableBlockIds(Set<Integer> result);
-
+	
 	protected boolean canPlaceBlockAt(World world, int x, int y, int z, int blockId, int metadata) {
 		return true;
 	}
-
+	
 	protected void dropBlockAsItem(World world, Coord3D target, int blockId, int metadata) {
 		if (Utils.isServerSide(world)) {
 			Block block = Utils.getBlock(blockId);
@@ -106,11 +106,11 @@ public abstract class AbstractOperator implements Operator {
 			}
 		}
 	}
-
+	
 	protected ScanTime getScanTime(int blockId) {
 		return ScanTime.Normal;
 	}
-
+	
 	protected boolean isReplaceable(int oldBlockId, int newBlockId) {
 		// ハリボテより地面を優先する
 		if (oldBlockId == Block.bedrock.blockID) // 受け側が bedrock は再配置不可能
@@ -122,12 +122,12 @@ public abstract class AbstractOperator implements Operator {
 			return true;
 		return false; // それ以外は再配置不可能
 	}
-
+	
 	protected void onCancelSetRealBlock(Materializer owner, BlockData data, Coord3D target) {
 		// 置こうとしているブロックをアイテム化
 		dropBlockAsItem(owner.world, target, data.block.blockID, data.metadata);
 	}
-
+	
 	protected boolean pickImitationBlock(Materializer owner, int blockId, int metadata, Coord3D pos, Coord3D base) {
 		Block block = Utils.getBlock(blockId);
 		if (block == null) {
@@ -144,7 +144,7 @@ public abstract class AbstractOperator implements Operator {
 		}
 		return true;
 	}
-
+	
 	protected NBTTagCompound readFromTileEntity(Materializer owner, int blockId, int metadata, Coord3D pos) {
 		World world = owner.world;
 		TileEntity tile = world.getBlockTileEntity(pos.x, pos.y, pos.z);
@@ -155,7 +155,7 @@ public abstract class AbstractOperator implements Operator {
 		}
 		return null;
 	}
-
+	
 	protected boolean setRealBlock(Materializer owner, BlockData data, Coord3D target, int rotate) {
 		World world = owner.world;
 		int x = target.x;
@@ -179,20 +179,20 @@ public abstract class AbstractOperator implements Operator {
 		}
 		// タイルエンティティ転写
 		writeToTileEntity(owner, data, target, rotate);
-
+		
 		// 置いたら true
 		return true;
 	}
-
+	
 	protected boolean setRealBlock(Materializer owner, int blockId, int metadata, int x, int y, int z) {
 		if (blockId == 0 || canPlaceBlockAt(owner.world, x, y, z, blockId, metadata)) {
 			return owner.setRealBlock(x, y, z, blockId, metadata);
 		}
 		return false;
 	}
-
+	
 	protected abstract boolean setRealBlockWithRotation(Materializer owner, int blockId, int metadata, int x, int y, int z, int rotate);
-
+	
 	protected void writeToTileEntity(Materializer owner, BlockData data, Coord3D target, int rotate) {
 		if (data.block instanceof BlockContainer) {
 			NBTTagCompound tag = owner.getImitationTileEntity(data.absPos);
@@ -220,7 +220,7 @@ public abstract class AbstractOperator implements Operator {
 			realTile.readFromNBT(tag); // 転写
 		}
 	}
-
+	
 	protected static void loadTexture(RenderManager manager, String path) {
 		RenderEngine engine = manager.renderEngine;
 		engine.bindTexture(path);
