@@ -23,11 +23,13 @@ import java.util.TreeSet;
 import mod.ymt.air.op.AnvilOperator;
 import mod.ymt.air.op.ButtonOperator;
 import mod.ymt.air.op.ChestOperator;
+import mod.ymt.air.op.RenderedChestOperator;
 import mod.ymt.air.op.DelicateDirectionalOperator;
 import mod.ymt.air.op.DelicateOperator;
 import mod.ymt.air.op.DirectionalOperator;
 import mod.ymt.air.op.DoorOperator;
 import mod.ymt.air.op.EnderChestOperator;
+import mod.ymt.air.op.RenderedEnderChestOperator;
 import mod.ymt.air.op.FluidOperator;
 import mod.ymt.air.op.InventoryBlockOperator;
 import mod.ymt.air.op.LadderOperator;
@@ -85,6 +87,12 @@ public class AirCraftCore extends NekonoteCore {
 	public final Set<Integer> appendixBlockId = new TreeSet<Integer>();
 	public final Set<Integer> ignoredBlockId = new TreeSet<Integer>();
 	
+	// Added for restricted fly/float:
+	public final Set<Integer> flyBlockId = new TreeSet<Integer>();
+	public float flyBlockPercent = 0;
+	public final Set<Integer> floatBlockId = new TreeSet<Integer>();
+	public float floatBlockPercent = 0;
+
 	private AirCraftCore() {
 		;
 	}
@@ -253,7 +261,18 @@ public class AirCraftCore extends NekonoteCore {
 	public void setBlocklimit(int blocklimit) {
 		this.blocklimit = blocklimit;
 	}
-	
+
+	// Added for restricted fly/float:
+	public void setFloatBlockPercent(float percent)
+	{
+		this.floatBlockPercent = percent;
+	}
+	public void setFlyBlockPercent(float percent)
+	{
+		this.flyBlockPercent = percent;
+	}
+
+
 	public void setBlockOperator(int blockId, Operator operator) {
 		if (0 < blockId && blockId < blockops.length) {
 			if (blockops[blockId] != null) {
@@ -306,7 +325,7 @@ public class AirCraftCore extends NekonoteCore {
 		return new BlockData(Block.cloth, data.metadata, data.relPos, data.absPos);
 	}
 	
-	protected Operator[] getDefaultOperators() {
+	protected Operator[] getDefaultOperators(boolean doRender) {
 		return new Operator[]{
 			new NormalOperator(),
 			new DelicateOperator(),
@@ -325,8 +344,8 @@ public class AirCraftCore extends NekonoteCore {
 			new ButtonOperator(),
 			new LeverOperator(),
 			new InventoryBlockOperator(),
-			new ChestOperator(),
-			new EnderChestOperator(),
+			(doRender ? new RenderedChestOperator() : new ChestOperator()),
+			(doRender ? new RenderedEnderChestOperator() : new EnderChestOperator()),
 			new AnvilOperator(),
 			new PistonOperator(),
 		//			new EndPortalOperator(),
@@ -356,7 +375,13 @@ public class AirCraftCore extends NekonoteCore {
 			net.registerPacketChannel(baseMod);
 			
 			// Operator 登録
-			for (Operator op: getDefaultOperators()) {
+			boolean doRender = true;
+			try {
+				Class.forName("net.minecraft.client.Minecraft");
+			} catch(ClassNotFoundException e) {
+				doRender = false;
+			}			
+			for (Operator op: getDefaultOperators(doRender)) {
 				op.register(this);
 			}
 		}
@@ -366,7 +391,14 @@ public class AirCraftCore extends NekonoteCore {
 		synchronized (imitators) {
 			for (EntityCraftCore imitator: imitators) {
 				if (imitator != null) {
-					imitator.processMove(null, type);
+					EntityCraftCore owner = EntityCraftCore.getEntityCore(imitator.worldObj, imitator.getOwnerName());
+					if (owner == null) {
+						imitator.processMove(null, type);
+					} else {
+						if (name.equals(owner.getPlayerName())) {
+							imitator.processMove(null, type);
+						}
+					}
 				}
 			}
 		}

@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -64,6 +66,9 @@ public class ImitationSpace implements IBlockAccess {
 	 * カスタムレンダリングするブロック
 	 */
 	private final List<BlockData> customRenderBlocks = new ArrayList<BlockData>();
+	// Fly and float block counts
+	private int flyBlockCount = 0;
+	private int floatBlockCount = 0;
 	
 	public ImitationSpace(World parent) {
 		this.parent = parent;
@@ -97,6 +102,9 @@ public class ImitationSpace implements IBlockAccess {
 		this.surfaceBlocks.clear();
 		this.semiSurfaceBlocks.clear();
 		this.customRenderBlocks.clear();
+		// Added for restricted fly/float:
+		this.flyBlockCount = 0;
+		this.floatBlockCount = 0;
 	}
 	
 	public int countAllBlocks() {
@@ -323,5 +331,48 @@ public class ImitationSpace implements IBlockAccess {
 			}
 		}
 		return false;
+	}
+
+
+
+	// Added for restricted fly/float:
+	public int countFlyBlocks()
+	{
+		if (flyBlockCount == 0) {
+			calculateSpecialMovementBlocks();
+		}
+
+		return flyBlockCount;
+	}
+
+	public int countFloatBlocks()
+	{
+		if (floatBlockCount == 0) {
+			calculateSpecialMovementBlocks();
+		}
+
+		return floatBlockCount;
+	}
+
+	public void calculateSpecialMovementBlocks()
+	{
+		List<BlockData> allBlocks = new LinkedList<BlockData>(this.getAllBlocks());
+
+		Iterator<BlockData> iter = allBlocks.iterator();
+		AirCraftCore core = AirCraftCore.getInstance();
+
+		floatBlockCount = 0;
+		flyBlockCount = 0;
+		while (iter.hasNext())
+		{
+			BlockData data = iter.next();
+			if (core.flyBlockId.contains(data.block.blockID)) {
+				flyBlockCount++;
+			}
+			if (core.floatBlockId.contains(data.block.blockID)) {
+				floatBlockCount++;
+			}
+			iter.remove();
+		}
 	}
 }
